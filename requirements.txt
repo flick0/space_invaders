@@ -1,3 +1,4 @@
 git+https://github.com/Rapptz/Discord.py # Install latest version of Discord.py
 jishaku # Install for debugging, remove later??
 motor
+dotenv
