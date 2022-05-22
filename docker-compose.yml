@@ -1,0 +1,19 @@
+version: 3
+services:
+  database:
+    image: "mongo:latest"
+    container_name: "database"
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=Untraceable
+      - MONGO_INITDB_ROOT_PASSWORD=PasswordThatIsSecure! # I mean no one can see the IP so :shrug:
+    volumes:
+      - "/data/db"
+
+  bot:
+    image: "tcr_event_bot"
+    container_name: "bot"
+
+volumes:
+  "/data/db": {}
