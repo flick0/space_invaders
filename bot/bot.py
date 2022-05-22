@@ -4,20 +4,18 @@ import discord
 from discord.ext import commands
 
 
-class Bot(commands.AutoShardedBot):
+class Bot(commands.Bot):
     def __init__(self):
         self.COGS = []
-        self.message_cache = {}
         super().__init__(
-            command_prefix="!",
-            strip_after_prefix=True,
+            command_prefix="=",
             intents=discord.Intents.all(),
         )
 
     async def on_ready(self):
         """run when bot is ready"""
         print(f"{self.user} is ready!")
-        await self.change_presence(activity=discord.Game(name="!help"))
+        await self.change_presence(activity=discord.Game(name="=help"))
 
         async for cog in self.load_all():
             if cog[1] is not None:
