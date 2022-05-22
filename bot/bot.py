@@ -36,6 +36,9 @@ class Bot(commands.Bot):
                 self.COGS.append(f"bot.commands.{file[:-3]}")
                 yield (f"bot.commands.{file[:-3]}", err)
 
+    def run(self):
+        super().run(os.environ["TOKEN"])
+
     async def unload_all(self):
         for cog in list(self.COGS):
             err = None
@@ -65,5 +68,5 @@ class Bot(commands.Bot):
         return (cog, err)
 
 
-def run(token):
-    return Bot().run(token)
+def run():
+    return Bot().run()
