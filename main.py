@@ -1,6 +1,5 @@
-from os import environ
-from discord.ext import commands
+import os
 
-class SpaceInvaders(commands.Bot):
-    def run(self):
-        super().run(environ['TOKEN'])
+from bot import bot
+
+bot.run(os.environ["TOKEN"])
