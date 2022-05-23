@@ -7,11 +7,11 @@ from game import space_invaders
 def render_board(board):
     print(board)
     desc = ""
-    for y in board:
-        for x in y:
-            if x.get("alien"):
+    for y in range(len(board[0])):
+        for x in board:
+            if x[y].get("alien"):
                 desc += "o"
-            elif x.get("ship"):
+            elif x[y].get("ship"):
                 desc += "="
             else:
                 desc += "-"
@@ -25,9 +25,35 @@ class Game(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def play(self, ctx, rows=5, cols=5):
-        level = space_invaders.new(1, rows, cols)
-        await ctx.send(embed=render_board(level.get_board()))
+    async def play(self, ctx, x=10, y=5, level=3):
+        level = space_invaders.new(3, x, y)
+        game = await ctx.send(
+            embed=render_board(level.get_board()), view=Control(level)
+        )
+
+
+class Control(discord.ui.View):
+    def __init__(self, level):
+        self.level = level
+        super().__init__()
+
+    @discord.ui.button(label="<", custom_id="prev")
+    async def left(self, interaction, button):
+        board = self.level.control_ship("left")
+        if board:
+            return await interaction.response.edit_message(
+                embed=render_board(self.level.get_board()), view=self
+            )
+
+    @discord.ui.button(
+        label=">", custom_id="next", style=discord.ButtonStyle.green
+    )
+    async def right(self, interaction, button):
+        board = self.level.control_ship("right")
+        if board:
+            return await interaction.response.edit_message(
+                embed=render_board(self.level.get_board()), view=self
+            )
 
 
 async def setup(bot):

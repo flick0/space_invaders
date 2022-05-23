@@ -1,58 +1,70 @@
 import random
+import time
 
 
 class Level:
-    def __init__(self, lvl: int, row: int = 5, col: int = 5):
+    def __init__(self, lvl: int, x: int = 10, y: int = 5):
         self.lvl = lvl
-        self.board = []
-        self.row = row
-        self.col = col
-        for r in range(row):
-            line = []
-            for c in range(col):
-                if r <= row // 2:
-                    line.append({"alien": True})
-            self.board.append(line)
-
-        """example board
-
-        [
-            [
-                {"alien":True},{"alien":True},{"alien":True,"bullet":True}
-            ],
-            [
-                {},{},{}
-            ],
-            [
-                {},{},{"ship":True}
-            ]
-        ]
-
-        3 rows 3 columns
-        
-        (alien)(alien)(injured alien) 
-        (     )(     )(     ) 
-        (     )(     )(ship ) 
-
-        """
+        self.aliens = []
+        self.bullets = []
+        self.x = x
+        self.waves = 1
+        self.y = y
+        self.ship = (0, 0)
+        for _ in range(self.x // 2):
+            self.spawn_alien()
         self.spawn_ship()
 
     def get_board(self):
-        return self.board
+        board = []
+        for x in range(self.x):
+            board.append([])
+            for y in range(self.y):
+                board[x].append({})
+        for alien in self.aliens:
+            x, y = alien["pos"]
+            board[x][y] = {"alien": True}
+        x, y = self.ship
+        board[x][y] = {"ship": True}
+        return board
+
+    def spawn_alien(self):
+        dat = {"pos": (random.randrange(self.x), 0)}
+        if dat not in self.aliens:
+            self.aliens.append(dat)
+        else:
+            self.spawn_alien()
+
+    def update(self):
+        for i in range(len(self.aliens)):
+            self.aliens[i]["pos"] = (
+                self.aliens[i]["pos"][0],
+                self.aliens[i]["pos"][1] + 1,
+            )
+        if self.waves < self.lvl:
+            for _ in range(self.x // 2):
+                self.spawn_alien()
+            self.waves += 1
+        return self.get_board()
 
     def spawn_ship(self):
-        ship_x = random.randrange(self.col)
-        self.board[-1] = [
-            {"ship": True} if x == ship_x else {} for x in range(self.col)
-        ]
-        self.ship = (len(self.board) - 1, ship_x)
+        ship_x = self.x // 2
+        self.ship = (ship_x, -1)
         print("ship_pos ", self.ship)
-        """
-        (y_pos,x_pos)
-        """
 
-    def control_ship(dir: str):
-        ...
+    def control_ship(self, way: str):
+        if way == "left":
+            if self.ship[0] == 0:
+                self.ship = (self.x - 1, -1)
+            else:
+                self.ship = (self.ship[0] - 1, -1)
+        elif way == "right":
+            if self.ship[0] == self.x - 1:
+                self.ship = (0, -1)
+            else:
+                self.ship = (self.ship[0] + 1, -1)
+        print("ship_pos ", self.ship)
+        return self.update()
 
 
 def new(lvl: int, rows: int, cols: int):
