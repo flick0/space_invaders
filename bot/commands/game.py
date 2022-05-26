@@ -30,7 +30,7 @@ async def render_board(board):
             else:
                 desc += "<:sp:979317788776726558>"
         desc += "\n"
-    embed = discord.Embed(title="space invaders", description=desc)
+    embed = discord.Embed(title=" ", description=desc)
     return embed
 
 

@@ -50,7 +50,7 @@ class Alien:
     def hit(self, dmg):
         self.model["hp"] -= dmg
         if self.model["hp"] <= 0:
-            self.level.aliens.remove(self)
+            return self.level.aliens_to_despawn.append(self)
 
     def contacted_ship(self):
         if self.pos == self.level.ship:
@@ -76,7 +76,7 @@ class Projectile:
     def update(self):
         if self.pos[1] == 0:
             print("removing proj1")
-            self.level.projectiles.remove(self)
+            return self.level.projectiles_to_despawn.append(self)
         print("moving proj: ", self.pos)
         self.pos = (self.pos[0], self.pos[1] - self.launcher["speed"])
         print("projectile:", self.pos)
@@ -87,7 +87,7 @@ class Projectile:
                 self.launcher["pen"] -= 1
             else:
                 print("removing proj2")
-                self.level.projectiles.remove(self)
+                return self.level.projectiles_to_despawn.append(self)
 
     def contacted(self):
         for alien in self.level.aliens:
@@ -107,6 +107,8 @@ class Level:
         self.hp = 1
         self.y = y
         self.ship = (0, 0)
+        self.projectiles_to_despawn = []
+        self.aliens_to_despawn = []
         for _ in range(self.x // 2):
             self.spawn_alien()
         self.spawn_ship()
@@ -160,6 +162,11 @@ class Level:
             if random.choice([True, False, True, True]):
                 self.spawn_alien()
                 self.waves += 1
+        for alien in self.aliens_to_despawn:
+            self.aliens.remove(alien)
+        for projectile in self.projectiles_to_despawn:
+            self.projectiles.remove(projectile)
+        self.aliens_to_despawn, self.projectiles_to_despawn = [], []
         return self.get_board()
 
     def spawn_ship(self):
