@@ -402,9 +402,9 @@ class Business(commands.Cog):
             description="All of your rockets.",
             color=0x00FF00,
         )
-        embed.set_author(name="Rocket List", icon_url=self.bot.user.avatar_url)
+        embed.set_author(name="Rocket List", icon_url=self.bot.user.avatar.url)
         embed.set_footer(
-            text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url
+            text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar.url
         )
 
         for rocket in business["rockets"]:
