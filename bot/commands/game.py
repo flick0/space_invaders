@@ -10,11 +10,15 @@ def render_board(board):
     for y in range(len(board[0])):
         for x in board:
             if x[y].get("alien"):
-                desc += "o"
+                desc += "👾"
             elif x[y].get("ship"):
-                desc += "="
+                desc += "🔱"
+            elif x[y].get("bullet") and x[y].get("alien"):
+                desc += "💥"
+            elif x[y].get("bullet"):
+                desc += "🟡"
             else:
-                desc += "-"
+                desc += "⬛"
         desc += "\n"
     embed = discord.Embed(title="space invaders", description=desc)
     return embed
@@ -42,7 +46,7 @@ class Control(discord.ui.View):
         board = self.level.control_ship("left")
         if board:
             return await interaction.response.edit_message(
-                embed=render_board(self.level.get_board()), view=self
+                embed=render_board(board), view=self
             )
 
     @discord.ui.button(
@@ -50,9 +54,11 @@ class Control(discord.ui.View):
     )
     async def right(self, interaction, button):
         board = self.level.control_ship("right")
+        print("===")
+        print(board)
         if board:
             return await interaction.response.edit_message(
-                embed=render_board(self.level.get_board()), view=self
+                embed=render_board(board), view=self
             )
 
 
