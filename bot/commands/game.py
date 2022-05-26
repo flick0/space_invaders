@@ -43,7 +43,6 @@ class Game(commands.Cog):
         level = space_invaders.new(level, x, y)
         game = await ctx.send("```starting...```")
         await game.edit(
-            " ",
             embed=await render_board(level.get_board().get("board")),
             view=Control(level),
         )
