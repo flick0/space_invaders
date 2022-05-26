@@ -9,6 +9,8 @@ fi;
 
 echo "Building Dockerfile for bot"
 
+docker volume create mongodb_volume
+
 docker build -t tcr_event_bot .
 
 echo "Finished building Dockerfile"
