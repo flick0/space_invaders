@@ -1,3 +1,4 @@
+import motor.motor_asyncio
 import os
 
 import discord
@@ -8,14 +9,15 @@ class Bot(commands.Bot):
     def __init__(self):
         self.COGS = []
         super().__init__(
-            command_prefix="=",
-            intents=discord.Intents.all(),
+            command_prefix = "=",
+            intents = discord.Intents.all(),
+            activity = discord.Game(name="=help")
         )
 
     async def on_ready(self):
-        """run when bot is ready"""
+        """Ran when bot is Ready."""
+
         print(f"{self.user} is ready!")
-        await self.change_presence(activity=discord.Game(name="=help"))
 
         async for cog in self.load_all():
             if cog[1] is not None:
@@ -23,11 +25,18 @@ class Bot(commands.Bot):
                 raise (cog[1])
             else:
                 print(f"Loaded {cog[0]}")
+    
+        self.db = motor.motor_asyncio.AsyncIOMotorClient(f"mongo://Untraceable:PasswordThatIsSecure!@localhost:27017/")
+        self.db.business = self.db["business"]["businesses"] # Collection -> Database or other way round I forgot
 
     async def load_all(self):
+
         await super().load_extension("jishaku")
+
         for file in os.listdir("./bot/commands"):
+
             if file.endswith(".py"):
+
                 err = None
                 try:
                     await super().load_extension(f"bot.commands.{file[:-3]}")
