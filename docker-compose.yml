@@ -9,10 +9,12 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=Untraceable
       - MONGO_INITDB_ROOT_PASSWORD=PasswordThatIsSecure! # I mean no one can see the IP so :shrug:
     volumes:
-      - "/mongodb_data:/data/db"
+      - "mongodb_volume:/data/db"
   bot:
     image: "tcr_event_bot"
     container_name: "bot"
+    env_file:
+      - .env
 
 volumes:
-  "data.db": {}
+  "mongodb_volume": {}
