@@ -125,9 +125,9 @@ class Business(commands.Cog):
         )
 
         embed.set_footer(
-            text=ctx.author.display_name, icon_url=ctx.author.avatar_url
+            text=ctx.author.display_name, icon_url=ctx.author.avatar.url
         )
-        embed.set_thumbnail(url=ctx.author.avatar_url)
+        embed.set_thumbnail(url=ctx.author.avatar.url)
 
         embed.add_field(
             name="create",
@@ -352,10 +352,10 @@ class Business(commands.Cog):
         )
 
         embed.set_author(
-            name="Rocket Command", icon_url=self.bot.user.avatar_url
+            name="Rocket Command", icon_url=self.bot.user.avatar.url
         )
         embed.set_footer(
-            text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url
+            text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar.url
         )
 
         embed.add_field(name="buy", value="Buy a rocket.", inline=False)
