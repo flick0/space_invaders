@@ -222,7 +222,8 @@ class BusinessCog(commands.Cog):
         )
         embed.add_field(
             name="Money you can claim.",
-            value = ""
+            value = f"{business_data['income_per_second'] * (time.time() - business_data['last_claim_time'])}",
+        )
 
         await ctx.reply(embed=embed)
 
