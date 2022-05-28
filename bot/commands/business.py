@@ -206,7 +206,8 @@ class Business(commands.Cog):
         description="Take off your rockets, gaining you money.",
     )
     async def business_take_off(self, ctx):
-        business = await self.bot.db.business.fetch_business({"owner_id": ctx.author.id})
+        business = await self.bot.db.business.fetch_business(ctx.author.id)
+
         if not business:
             return await ctx.reply("You don't have a business!")
 
@@ -224,7 +225,7 @@ class Business(commands.Cog):
         description="Transfer ownership of your business to another user.",
     )
     async def business_transfer(self, ctx, user: Member):
-        business = await self.bot.db.business.fetch_business({"owner_id": ctx.author.id})
+        business = await self.bot.db.business.fetch_business(ctx.author.id)
 
         if not business:
             return await ctx.reply("You don't have ownership of a business!")
@@ -252,7 +253,7 @@ class Business(commands.Cog):
                 "You didn't enter the name of your business correctly, so we won't transfer ownership. Try again."
             )
 
-        await self.bot.db.business.transfer_business_ownership(business.to_dict(), {"$set": {"owner_id": user.id}})
+        await self.bot.db.business.transfer_business_ownership(business.to_dict(), user.id)
         await ctx.reply(f"Business ownership transferred to **{user.display_name}**.")
 
         try:
@@ -261,7 +262,7 @@ class Business(commands.Cog):
             )
         except Forbidden:
             await ctx.send(
-                f"**{user.mention}**, you have been given ownership of **{business['name']}** by **{ctx.author.display_name}**."
+                f"**{user.mention}**, you have been given ownership of **{business.name}** by **{ctx.author.display_name}**."
             )
 
     @commands.group(
