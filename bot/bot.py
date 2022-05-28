@@ -1,3 +1,4 @@
+from time import time
 import motor.motor_asyncio
 from .commands.business import Business, Rocket
 import os
@@ -9,8 +10,36 @@ class BusinessDatabase:
     def __init__(self, db):
         self.db = db
     
-    async def find_business(self, owner_id: int):
-        return Business.from_dict(await self.db.businesses.find_one({"owner_id": owner_id}))
+    async def fetch_business(self, owner_id: int):
+        data = await self.db.find_one({"owner_id": owner_id})
+        return Business.from_dict(data) if data else None
+
+    async def delete_business(self, owner_id: int):
+        data = await self.db.delete_one({"owner_id": owner_id})
+        return Business.from_dict(data)
+
+    async def transfer_business_ownership(self, old_owner_id: int, new_owner_id: int):
+        await self.db.update_one(
+            {"owner_id": old_owner_id},
+            {"$set": {"owner_id": new_owner_id}}
+        )
+        return await self.fetch_business(new_owner_id)
+
+    async def edit(self, owner_id: int, name: str):
+        await self.db.update_one(
+            {"owner_id": owner_id},
+            {"$set": {"name": name}}
+        )
+        return await self.fetch_business(owner_id)
+
+    async def create_business(self, owner_id: int, name: str):
+        await self.db.insert_one({
+            "owner_id": owner_id, # The owner of the business
+            "name": name, # The name of the business
+            "rockets": [], # The rockets they own
+            "money": 100, # How much money they have
+            "last_claim_time": int(time()) # The last time they claimed their money
+        })
 
 class Bot(commands.Bot):
     def __init__(self):
@@ -35,7 +64,7 @@ class Bot(commands.Bot):
                 print(f"Loaded {cog[0]}")
     
         self.db = motor.motor_asyncio.AsyncIOMotorClient(os.environ["MONGO_URI"])
-        self.db.business = self.db["business"]["businesses"] # Database -> Collection or other way round I forgot
+        self.db.business = BusinessDatabase(self.db["business"]["businesses"]) # Database -> Collection or other way round I forgot
 
     async def load_all(self):
 
