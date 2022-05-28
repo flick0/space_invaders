@@ -219,9 +219,7 @@ class Business(commands.Cog):
                 seconds * rocket.income_per_second
             )  # Difference * IncomePerSecond
             income += rocket.rate * multiplier  # HowMuchMoneyRocketMakes * Difference
-        await self.bot.db.business.update_one(
-            business.to_dict(), {"$inc": {"money": income}}
-        )
+        await self.bot.db.business.add_money(business.owner_id, income)
         await self.bot.db.business.update_one(
             business, {"$set": {"last_claim_time": int(time())}}
         )

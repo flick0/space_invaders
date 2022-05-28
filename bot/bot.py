@@ -11,6 +11,9 @@ class BusinessDatabase:
     def __init__(self, db):
         self.db = db
 
+    async def update_one(self, *args, **kwargs):
+        return await self.db.update_one(*args, **kwargs)
+
     async def fetch_business(self, owner_id: int):
         data = await self.db.find_one({"owner_id": owner_id})
         return Business.from_dict(data) if data else None
@@ -27,6 +30,12 @@ class BusinessDatabase:
 
     async def edit(self, owner_id: int, name: str):
         await self.db.update_one({"owner_id": owner_id}, {"$set": {"name": name}})
+        return await self.fetch_business(owner_id)
+
+    async def add_money(self, owner_id: int, amount: int):
+        await self.db.update_one(
+            {"owner_id": owner_id}, {"$inc": {"money": amount}}
+        )
         return await self.fetch_business(owner_id)
 
     async def create_business(self, owner_id: int, name: str):
