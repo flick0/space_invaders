@@ -21,13 +21,27 @@ class Rocket:
         return {"name": self.name, "rate": self.rate, "price": self.price}
 
 class Business:
-    def __init__(self, owner_id: int, name: str, rockets: List[Rocket], income_per_second: int, last_claim_time: int):
-        owner_id = owner_id
-        name = name
-        rockets = rockets
-        income_per_second = income_per_second
-        last_claim_time = last_claim_time
+    def __init__(self, owner_id: int, name: str, rockets: List[Rocket], income_per_second: int, last_claim_time: int, money: int):
+        self.owner_id = owner_id
+        self.name = name
+        self.rockets = rockets
+        self.income_per_second = income_per_second
+        self.last_claim_time = last_claim_time
+        self.money = money 
 
+    def to_dict(self):
+        return {
+            "owner_id": self.owner_id,
+            "name": self.name,
+            "rockets": [rocket.to_dict() for rocket in self.rockets],
+            "income_per_second": self.income_per_second,
+            "last_claim_time": self.last_claim_time,
+            "money": self.money
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(data["owner_id"], data["name"], [Rocket.from_dict(rocket) for rocket in data["rockets"]], data["income_per_second"], data["last_claim_time"], data["money"])
 
 
 class RocketMenu(Select):
@@ -117,7 +131,13 @@ class SellRocketMenu(RocketMenu):
 class Business(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.rockets: List[Rocket]
+        self.rockets: List[Rocket] = [
+            Rocket(
+                "Basic",
+                0.1,
+                100
+            )
+        ]
 
     @commands.group(
         invoke_without_command=True,
@@ -152,6 +172,42 @@ class Business(commands.Cog):
         embed.add_field(
             name="transfer",
             value="Transfer ownership of your business.",
+            inline=False,
+        )
+
+        await ctx.reply(embed=embed)
+
+    @business.command(name = "information", aliases = ["i", "info"])
+    async def business_information(self, ctx: commands.Context):
+        business_data = await self.bot.db.business.find_one(
+            {"owner_id": ctx.author.id}
+        )
+
+        if not business_data:
+            return await ctx.send("You don't own a business!")
+
+        embed = Embed(
+            title="Business Information",
+            description="Information about your business.",
+            color=ctx.author.color,
+        )
+
+        embed.set_footer(
+            text=ctx.author.display_name, icon_url=ctx.author.avatar.url
+        )
+        embed.set_thumbnail(url=ctx.author.avatar.url)
+
+        embed.add_field(
+            name="Name", value=business_data["name"], inline=False
+        )
+        embed.add_field(
+            name="Income",
+            value=f"{business_data['income_per_second']} per second",
+            inline=False,
+        )
+        embed.add_field(
+            name="Money",
+            value=f"{business_data['money']}",
             inline=False,
         )
 
@@ -200,6 +256,7 @@ class Business(commands.Cog):
                 "rockets": [],
                 "income_per_second": 0,
                 "last_claim_time": int(time()),
+                "money": 100,
             }
         )
 
@@ -361,7 +418,7 @@ class Business(commands.Cog):
         )
 
         embed.set_author(
-            name="Rocket Command", icon_url=self.bot.user.avatar.url
+            name="Rocket Command", icon_url=ctx.author.avatar.url
         )
         embed.set_footer(
             text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar.url
@@ -411,7 +468,7 @@ class Business(commands.Cog):
             description="All of your rockets.",
             color=0x00FF00,
         )
-        embed.set_author(name="Rocket List", icon_url=self.bot.user.avatar.url)
+        embed.set_author(name="Rocket List", icon_url=self.ctx.author.avatar.url)
         embed.set_footer(
             text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar.url
         )
