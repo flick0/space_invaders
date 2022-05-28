@@ -84,9 +84,20 @@ class Business(commands.Cog):
         )
         embed.add_field(
             name="Money you can claim.",
-            value=f"{business.income_per_second * (time.time() - business.last_claim_time)}",
+            value=f"{business.income_per_second * (int(time.time()) - business.last_claim_time)}",
         )
 
+        value = ""
+
+        for rocket in business.to_dict()["rockets"]:
+
+            if len(value > 1024):
+                value += f"{rocket['name']} - {rocket['amount']}\n"
+            else:
+                embed.add_field(name="Rockets", value=value, inline=False)
+            value = ""
+        if value:
+            embed.add_field(name="Rockets", value=value, inline=False)
         await ctx.reply(embed=embed)
 
     @business.command(
@@ -95,7 +106,9 @@ class Business(commands.Cog):
         description="Create a new business if you don't already have one.",
     )
     async def business_create(self, ctx: commands.Context):
+
         business = await self.bot.db.business.find_one({"owner_id": ctx.author.id})
+
         if business:
             return await ctx.reply("You already have a business!")
 
@@ -121,7 +134,7 @@ class Business(commands.Cog):
                 "Cancelled. Come back when you're ready to make a commitment."
             )  # If they cancelled then cancel
 
-        await self.bot.db.business.insert_one(
+        await self.bot.db.business.create_business(
             {
                 "owner_id": ctx.author.id,
                 "name": message.content,
@@ -141,12 +154,12 @@ class Business(commands.Cog):
         if not name:
             return await ctx.reply("You need to specify a name.")
 
-        business = await self.bot.db.business.find_one({"owner_id": ctx.author.id})
+        business = await self.bot.db.business.fetch_business({"owner_id": ctx.author.id})
 
         if not business:
             return await ctx.reply("You don't have ownership of a business!")
 
-        await self.bot.db.business.update_one(business, {"$set": {"name": name}})
+        await self.bot.db.business.update_one(business.to_dict(), {"$set": {"name": name}})
 
         await ctx.reply("Business name updated.")
 
@@ -156,7 +169,7 @@ class Business(commands.Cog):
         description="Delete your business. This cannot be reversed.",
     )
     async def business_delete(self, ctx):
-        business = await self.bot.db.business.find_one({"owner_id": ctx.author.id})
+        business = await self.bot.db.business.fetch_business({"owner_id": ctx.author.id})
 
         if not business:
             return await ctx.reply("You don't have ownership of a business!")
@@ -176,12 +189,12 @@ class Business(commands.Cog):
                 "Timed out, try again when you're ready to make such a bad choice."
             )
 
-        if message.content.lower() != business["name"]:
+        if message.content.lower() != business.name:
             return await ctx.reply(
                 "You didn't enter the name of your business correctly, so we won't delete it. Try again."
             )
 
-        await self.bot.db.business.delete_one(business)
+        await self.bot.db.business.delete_business(business)
         await ctx.reply(
             "**Business deleted.** Don't cry to the developers if you want it back. You *can* restart later though."
         )
@@ -192,25 +205,25 @@ class Business(commands.Cog):
         description="Take off your rockets, gaining you money.",
     )
     async def business_take_off(self, ctx):
-        business_data = await self.bot.db.business.find_one({"owner_id": ctx.author.id})
-        if not business_data:
+        business = await self.bot.db.business.fetch_business({"owner_id": ctx.author.id})
+        if not business:
             return await ctx.reply("You don't have a business!")
 
-        rockets = business_data["rockets"]
+        rockets = [Rocket.from_dict(data) for data in business.rockets]
         income = 0
         for rocket in rockets:
             seconds = (
-                int(time()) - business_data["last_claim_time"]
+                int(time()) - business.last_claim_time
             )  # CurrentTime - LastClaimTime = Difference
             multiplier = (
-                seconds * rocket["income_per_second"]
+                seconds * rocket.income_per_second
             )  # Difference * IncomePerSecond
             income += rocket.rate * multiplier  # HowMuchMoneyRocketMakes * Difference
         await self.bot.db.business.update_one(
-            business_data, {"$inc": {"money": income}}
+            business.to_dict(), {"$inc": {"money": income}}
         )
         await self.bot.db.business.update_one(
-            business_data, {"$set": {"last_claim_time": int(time())}}
+            business, {"$set": {"last_claim_time": int(time())}}
         )
         await ctx.reply(f"You earned {income}!")
 
@@ -220,7 +233,7 @@ class Business(commands.Cog):
         description="Transfer ownership of your business to another user.",
     )
     async def business_transfer(self, ctx, user: Member):
-        business = await self.bot.db.business.find_one({"owner_id": ctx.author.id})
+        business = await self.bot.db.business.fetch_business({"owner_id": ctx.author.id})
 
         if not business:
             return await ctx.reply("You don't have ownership of a business!")
@@ -248,7 +261,7 @@ class Business(commands.Cog):
                 "You didn't enter the name of your business correctly, so we won't transfer ownership. Try again."
             )
 
-        await self.bot.db.business.update_one(business, {"$set": {"owner_id": user.id}})
+        await self.bot.db.business.transfer_business_ownership(business.to_dict(), {"$set": {"owner_id": user.id}})
         await ctx.reply(f"Business ownership transferred to **{user.display_name}**.")
 
         try:
@@ -300,36 +313,6 @@ class Business(commands.Cog):
             "Select a rocket to sell from the menu below.",
             view=View().add_item(SellRocketMenu()),
         )
-
-    @rocket.command(name="list", description="List all of your rockets.", aliases=["l"])
-    async def rocket_list(self, ctx):
-        business = await self.bot.db.business.find_one({"owner_id": ctx.author.id})
-
-        if not business:
-            return await ctx.reply("You don't have ownership of a business!")
-
-        if not business["rockets"]:
-            return await ctx.reply("You don't have any rockets!")
-
-        embed = Embed(
-            title="Rocket List",
-            description="All of your rockets.",
-            color=0x00FF00,
-        )
-        embed.set_author(name="Rocket List", icon_url=self.ctx.author.avatar.url)
-        embed.set_footer(
-            text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar.url
-        )
-
-        for rocket in business["rockets"]:
-            embed.add_field(
-                name=rocket["name"],
-                value=f"Cost: {rocket['cost']}",
-                inline=False,
-            )
-
-        await ctx.reply(embed=embed)
-
 
 async def setup(bot):
     await bot.add_cog(Business(bot))
