@@ -128,7 +128,7 @@ class SellRocketMenu(RocketMenu):
         )
 
 
-class Business(commands.Cog):
+class BusinessCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.rockets: List[Rocket] = [
@@ -220,6 +220,9 @@ class Business(commands.Cog):
             value=f"{business_data['money']}",
             inline=False,
         )
+        embed.add_field(
+            name="Money you can claim.",
+            value = ""
 
         await ctx.reply(embed=embed)
 
@@ -494,4 +497,4 @@ class Business(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(Business(bot))
+    await bot.add_cog(BusinessCog(bot))
