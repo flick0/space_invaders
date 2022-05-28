@@ -1,9 +1,16 @@
 import motor.motor_asyncio
+from .commands.business import Business, Rocket
 import os
 
 import discord
 from discord.ext import commands
 
+class BusinessDatabase:
+    def __init__(self, db):
+        self.db = db
+    
+    async def find_business(self, owner_id: int):
+        return Business.from_dict(await self.db.businesses.find_one({"owner_id": owner_id}))
 
 class Bot(commands.Bot):
     def __init__(self):
