@@ -1,7 +1,7 @@
-from typing import List
 from discord import SelectOption
 from discord.ui import Select
 from .objects import *
+
 class RocketMenu(Select):
     def __init__(self, rockets: list[Rocket]):
 
