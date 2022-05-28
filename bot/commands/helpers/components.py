@@ -86,7 +86,7 @@ class RocketMenu(Select):
         business = await interaction.client.db.business.fetch_business(interaction.user.id)
 
         if not business:
-            return await interaction.send("You don't own a business!")
+            return await interaction.response.send_message("You don't own a business!")
 
         rockets = []
         total = 0
@@ -99,7 +99,7 @@ class RocketMenu(Select):
             rockets.append(rocket)
 
         if total > business.money:
-            return await interaction.send("You don't have enough money!")
+            return await interaction.response.send_message("You don't have enough money!")
 
         await interaction.client.db.business.add_money(-total)
         await interaction.response.send_message(
