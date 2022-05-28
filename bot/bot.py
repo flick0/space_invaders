@@ -13,6 +13,7 @@ class Bot(commands.Bot):
             intents = discord.Intents.all(),
             activity = discord.Game(name="=help")
         )
+        self.owner_ids = [482139697796349953, 507969622876618754]
 
     async def on_ready(self):
         """Ran when bot is Ready."""

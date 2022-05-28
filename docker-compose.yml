@@ -1,8 +1,9 @@
-version: "2"
+version: "3"
 services:
   database:
     image: "mongo:latest"
     container_name: "database"
+    command: "mongod --bind_ip_all"
     ports:
       - "27017:27017"
     environment:
