@@ -28,7 +28,7 @@ class Bot(commands.Bot):
                 print(f"Loaded {cog[0]}")
     
         self.db = motor.motor_asyncio.AsyncIOMotorClient(os.environ["MONGO_URI"])
-        self.db.business = self.db["business"]["businesses"] # Collection -> Database or other way round I forgot
+        self.db.business = self.db["business"]["businesses"] # Database -> Collection or other way round I forgot
 
     async def load_all(self):
 
