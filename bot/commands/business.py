@@ -7,16 +7,11 @@ from discord.ext import commands
 from .helpers.components import *
 from discord.ui import View
 
+
 class BusinessCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.rockets: List[Rocket] = [
-            Rocket(
-                "Basic",
-                0.1,
-                100
-            )
-        ]
+        self.rockets: List[Rocket] = [Rocket("Basic", 0.1, 100)]
 
     @commands.group(
         invoke_without_command=True,
@@ -32,9 +27,7 @@ class BusinessCog(commands.Cog):
             color=ctx.author.color,
         )
 
-        embed.set_footer(
-            text=ctx.author.display_name, icon_url=ctx.author.avatar.url
-        )
+        embed.set_footer(text=ctx.author.display_name, icon_url=ctx.author.avatar.url)
         embed.set_thumbnail(url=ctx.author.avatar.url)
 
         embed.add_field(
@@ -42,35 +35,29 @@ class BusinessCog(commands.Cog):
             value="Create a new business if you don't already have one.",
             inline=False,
         )
-        embed.add_field(
-            name="delete", value="Delete your business.", inline=False
-        )
-        embed.add_field(
-            name="edit", value="Edit your business's name.", inline=False
-        )
+        embed.add_field(name="delete", value="Delete your business.", inline=False)
+        embed.add_field(name="edit", value="Edit your business's name.", inline=False)
         embed.add_field(
             name="transfer",
             value="Transfer ownership of your business.",
             inline=False,
         )
         embed.add_field(
-            name = "information",
-            value = "View information about your business.",
-            inline = False,
+            name="information",
+            value="View information about your business.",
+            inline=False,
         )
         embed.add_field(
-            name = "take_off",
-            value = "Take off your business rockets.",
-            inline = False,
+            name="take_off",
+            value="Take off your business rockets.",
+            inline=False,
         )
 
         await ctx.reply(embed=embed)
 
-    @business.command(name = "information", aliases = ["i", "info"])
+    @business.command(name="information", aliases=["i", "info"])
     async def business_information(self, ctx: commands.Context):
-        business_data = await self.bot.db.business.find_one(
-            {"owner_id": ctx.author.id}
-        )
+        business_data = await self.bot.db.business.find_one({"owner_id": ctx.author.id})
 
         if not business_data:
             return await ctx.send("You don't own a business!")
@@ -81,14 +68,10 @@ class BusinessCog(commands.Cog):
             color=ctx.author.color,
         )
 
-        embed.set_footer(
-            text=ctx.author.display_name, icon_url=ctx.author.avatar.url
-        )
+        embed.set_footer(text=ctx.author.display_name, icon_url=ctx.author.avatar.url)
         embed.set_thumbnail(url=ctx.author.avatar.url)
 
-        embed.add_field(
-            name="Name", value=business_data["name"], inline=False
-        )
+        embed.add_field(name="Name", value=business_data["name"], inline=False)
         embed.add_field(
             name="Income",
             value=f"{business_data['income_per_second']} per second",
@@ -101,7 +84,7 @@ class BusinessCog(commands.Cog):
         )
         embed.add_field(
             name="Money you can claim.",
-            value = f"{business_data['income_per_second'] * (time.time() - business_data['last_claim_time'])}",
+            value=f"{business_data['income_per_second'] * (time.time() - business_data['last_claim_time'])}",
         )
 
         await ctx.reply(embed=embed)
@@ -112,15 +95,11 @@ class BusinessCog(commands.Cog):
         description="Create a new business if you don't already have one.",
     )
     async def business_create(self, ctx: commands.Context):
-        business = await self.bot.db.business.find_one(
-            {"owner_id": ctx.author.id}
-        )
+        business = await self.bot.db.business.find_one({"owner_id": ctx.author.id})
         if business:
             return await ctx.reply("You already have a business!")
 
-        await ctx.send(
-            "What is the name of your business?\nEnter `cancel` to cancel."
-        )
+        await ctx.send("What is the name of your business?\nEnter `cancel` to cancel.")
 
         # Creation logic
 
@@ -162,16 +141,12 @@ class BusinessCog(commands.Cog):
         if not name:
             return await ctx.reply("You need to specify a name.")
 
-        business = await self.bot.db.business.find_one(
-            {"owner_id": ctx.author.id}
-        )
+        business = await self.bot.db.business.find_one({"owner_id": ctx.author.id})
 
         if not business:
             return await ctx.reply("You don't have ownership of a business!")
 
-        await self.bot.db.business.update_one(
-            business, {"$set": {"name": name}}
-        )
+        await self.bot.db.business.update_one(business, {"$set": {"name": name}})
 
         await ctx.reply("Business name updated.")
 
@@ -181,9 +156,7 @@ class BusinessCog(commands.Cog):
         description="Delete your business. This cannot be reversed.",
     )
     async def business_delete(self, ctx):
-        business = await self.bot.db.business.find_one(
-            {"owner_id": ctx.author.id}
-        )
+        business = await self.bot.db.business.find_one({"owner_id": ctx.author.id})
 
         if not business:
             return await ctx.reply("You don't have ownership of a business!")
@@ -219,9 +192,7 @@ class BusinessCog(commands.Cog):
         description="Take off your rockets, gaining you money.",
     )
     async def business_take_off(self, ctx):
-        business_data = await self.bot.db.business.find_one(
-            {"owner_id": ctx.author.id}
-        )
+        business_data = await self.bot.db.business.find_one({"owner_id": ctx.author.id})
         if not business_data:
             return await ctx.reply("You don't have a business!")
 
@@ -234,9 +205,7 @@ class BusinessCog(commands.Cog):
             multiplier = (
                 seconds * rocket["income_per_second"]
             )  # Difference * IncomePerSecond
-            income += (
-                rocket.rate * multiplier
-            )  # HowMuchMoneyRocketMakes * Difference
+            income += rocket.rate * multiplier  # HowMuchMoneyRocketMakes * Difference
         await self.bot.db.business.update_one(
             business_data, {"$inc": {"money": income}}
         )
@@ -251,9 +220,7 @@ class BusinessCog(commands.Cog):
         description="Transfer ownership of your business to another user.",
     )
     async def business_transfer(self, ctx, user: Member):
-        business = await self.bot.db.business.find_one(
-            {"owner_id": ctx.author.id}
-        )
+        business = await self.bot.db.business.find_one({"owner_id": ctx.author.id})
 
         if not business:
             return await ctx.reply("You don't have ownership of a business!")
@@ -281,12 +248,8 @@ class BusinessCog(commands.Cog):
                 "You didn't enter the name of your business correctly, so we won't transfer ownership. Try again."
             )
 
-        await self.bot.db.business.update_one(
-            business, {"$set": {"owner_id": user.id}}
-        )
-        await ctx.reply(
-            f"Business ownership transferred to **{user.display_name}**."
-        )
+        await self.bot.db.business.update_one(business, {"$set": {"owner_id": user.id}})
+        await ctx.reply(f"Business ownership transferred to **{user.display_name}**.")
 
         try:
             await user.send(
@@ -310,18 +273,14 @@ class BusinessCog(commands.Cog):
             color=0x00FF00,
         )
 
-        embed.set_author(
-            name="Rocket Command", icon_url=ctx.author.avatar.url
-        )
+        embed.set_author(name="Rocket Command", icon_url=ctx.author.avatar.url)
         embed.set_footer(
             text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar.url
         )
 
         embed.add_field(name="buy", value="Buy a rocket.", inline=False)
         embed.add_field(name="sell", value="Sell a rocket.", inline=False)
-        embed.add_field(
-            name="list", value="List all of your rockets.", inline=False
-        )
+        embed.add_field(name="list", value="List all of your rockets.", inline=False)
         embed.add_field(
             name="info", value="Get information about a rocket.", inline=False
         )
@@ -342,13 +301,9 @@ class BusinessCog(commands.Cog):
             view=View().add_item(SellRocketMenu()),
         )
 
-    @rocket.command(
-        name="list", description="List all of your rockets.", aliases=["l"]
-    )
+    @rocket.command(name="list", description="List all of your rockets.", aliases=["l"])
     async def rocket_list(self, ctx):
-        business = await self.bot.db.business.find_one(
-            {"owner_id": ctx.author.id}
-        )
+        business = await self.bot.db.business.find_one({"owner_id": ctx.author.id})
 
         if not business:
             return await ctx.reply("You don't have ownership of a business!")

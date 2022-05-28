@@ -65,9 +65,7 @@ class Control(discord.ui.View):
                 embed=await render_board(board["board"]), view=self
             )
 
-    @discord.ui.button(
-        label=">", custom_id="next", style=discord.ButtonStyle.green
-    )
+    @discord.ui.button(label=">", custom_id="next", style=discord.ButtonStyle.green)
     async def right(self, interaction, button):
         board = self.level.control_ship("right")
         if board.get("win"):

@@ -31,12 +31,7 @@ class Alien:
     def update(self):
         x, y = self.pos
         print("alien: ", self.pos)
-        if (
-            x == 0
-            and self.pos[1] % 2
-            or x == self.level.x - 1
-            and not self.pos[1] % 2
-        ):
+        if x == 0 and self.pos[1] % 2 or x == self.level.x - 1 and not self.pos[1] % 2:
             self.pos = (self.pos[0], self.pos[1] + 1)
             print("alien1: ", self.pos)
         elif self.pos[1] % 2:

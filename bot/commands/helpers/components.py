@@ -2,6 +2,7 @@ from typing import List
 from discord import SelectOption
 from discord.ui import Select
 
+
 class Rocket:
     def __init__(self, name: str, rate: float, price: float):
         self.name = name
@@ -15,14 +16,23 @@ class Rocket:
     def to_dict(self):
         return {"name": self.name, "rate": self.rate, "price": self.price}
 
+
 class Business:
-    def __init__(self, owner_id: int, name: str, rockets: List[Rocket], income_per_second: int, last_claim_time: int, money: int):
+    def __init__(
+        self,
+        owner_id: int,
+        name: str,
+        rockets: List[Rocket],
+        income_per_second: int,
+        last_claim_time: int,
+        money: int,
+    ):
         self.owner_id = owner_id
         self.name = name
         self.rockets = rockets
         self.income_per_second = income_per_second
         self.last_claim_time = last_claim_time
-        self.money = money 
+        self.money = money
 
     def to_dict(self):
         return {
@@ -31,12 +41,19 @@ class Business:
             "rockets": [rocket.to_dict() for rocket in self.rockets],
             "income_per_second": self.income_per_second,
             "last_claim_time": self.last_claim_time,
-            "money": self.money
+            "money": self.money,
         }
 
     @classmethod
     def from_dict(cls, data: dict):
-        return cls(data["owner_id"], data["name"], [Rocket.from_dict(rocket) for rocket in data["rockets"]], data["income_per_second"], data["last_claim_time"], data["money"])
+        return cls(
+            data["owner_id"],
+            data["name"],
+            [Rocket.from_dict(rocket) for rocket in data["rockets"]],
+            data["income_per_second"],
+            data["last_claim_time"],
+            data["money"],
+        )
 
 
 class RocketMenu(Select):

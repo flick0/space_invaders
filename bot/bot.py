@@ -6,10 +6,11 @@ import os
 import discord
 from discord.ext import commands
 
+
 class BusinessDatabase:
     def __init__(self, db):
         self.db = db
-    
+
     async def fetch_business(self, owner_id: int):
         data = await self.db.find_one({"owner_id": owner_id})
         return Business.from_dict(data) if data else None
@@ -20,34 +21,35 @@ class BusinessDatabase:
 
     async def transfer_business_ownership(self, old_owner_id: int, new_owner_id: int):
         await self.db.update_one(
-            {"owner_id": old_owner_id},
-            {"$set": {"owner_id": new_owner_id}}
+            {"owner_id": old_owner_id}, {"$set": {"owner_id": new_owner_id}}
         )
         return await self.fetch_business(new_owner_id)
 
     async def edit(self, owner_id: int, name: str):
-        await self.db.update_one(
-            {"owner_id": owner_id},
-            {"$set": {"name": name}}
-        )
+        await self.db.update_one({"owner_id": owner_id}, {"$set": {"name": name}})
         return await self.fetch_business(owner_id)
 
     async def create_business(self, owner_id: int, name: str):
-        await self.db.insert_one({
-            "owner_id": owner_id, # The owner of the business
-            "name": name, # The name of the business
-            "rockets": [], # The rockets they own
-            "money": 100, # How much money they have
-            "last_claim_time": int(time()) # The last time they claimed their money
-        })
+        await self.db.insert_one(
+            {
+                "owner_id": owner_id,  # The owner of the business
+                "name": name,  # The name of the business
+                "rockets": [],  # The rockets they own
+                "money": 100,  # How much money they have
+                "last_claim_time": int(
+                    time()
+                ),  # The last time they claimed their money
+            }
+        )
+
 
 class Bot(commands.Bot):
     def __init__(self):
         self.COGS = []
         super().__init__(
-            command_prefix = "=",
-            intents = discord.Intents.all(),
-            activity = discord.Game(name="=help")
+            command_prefix="=",
+            intents=discord.Intents.all(),
+            activity=discord.Game(name="=help"),
         )
         self.owner_ids = [482139697796349953, 507969622876618754]
 
@@ -62,9 +64,11 @@ class Bot(commands.Bot):
                 raise (cog[1])
             else:
                 print(f"Loaded {cog[0]}")
-    
+
         self.db = motor.motor_asyncio.AsyncIOMotorClient(os.environ["MONGO_URI"])
-        self.db.business = BusinessDatabase(self.db["business"]["businesses"]) # Database -> Collection or other way round I forgot
+        self.db.business = BusinessDatabase(
+            self.db["business"]["businesses"]
+        )  # Database -> Collection or other way round I forgot
 
     async def load_all(self):
 
