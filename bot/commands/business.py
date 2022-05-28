@@ -107,7 +107,7 @@ class Business(commands.Cog):
     )
     async def business_create(self, ctx: commands.Context):
 
-        business = await self.bot.db.business.find_one({"owner_id": ctx.author.id})
+        business = await self.bot.db.business.fetch_business(ctx.author.id)
 
         if business:
             return await ctx.reply("You already have a business!")
@@ -152,14 +152,20 @@ class Business(commands.Cog):
     )
     async def business_edit(self, ctx, *, name: Optional[str]):
         if not name:
-            return await ctx.reply("You need to specify a name.")
+            await ctx.send("Please enter a name. Enter `cancel` to cancel.")
+
+            try:
+                message = await self.bot.wait_for("message", check=lambda m: m.author.id == ctx.author.id and m.channel.id == ctx.channel.id, timeout=15)
+            except TimeoutError:
+                return await ctx.reply("Timed out, try again when you're ready to make a commitment.")
+            name = message.content
 
         business = await self.bot.db.business.fetch_business({"owner_id": ctx.author.id})
 
         if not business:
             return await ctx.reply("You don't have ownership of a business!")
 
-        await self.bot.db.business.update_one(business.to_dict(), {"$set": {"name": name}})
+        await self.bot.db.business.edit(business.owner_id, name)
 
         await ctx.reply("Business name updated.")
 
