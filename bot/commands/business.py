@@ -1,6 +1,6 @@
 from asyncio import TimeoutError
 from time import time
-from typing import List, Optional
+from typing import Dict, Optional
 
 from discord import Embed, Forbidden, Member
 from discord.ext import commands
@@ -11,7 +11,9 @@ from discord.ui import View
 class Business(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.rockets: List[Rocket] = [Rocket("Basic", 0.1, 100)]
+        self.rockets: Dict[str, Rocket] = {
+            "Basic": Rocket("Basic", 1.1, 100)
+            }
 
     @commands.group(
         invoke_without_command=True,
