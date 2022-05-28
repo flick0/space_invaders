@@ -273,6 +273,7 @@ class Business(commands.Cog):
         invoke_without_command=True,
         description="The top level rocket command. Use a subcommand.",
         case_insensitive=True,
+        aliases = ["r", "rockets"]
     )
     async def rocket(self, ctx):
         embed = Embed(
