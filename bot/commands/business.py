@@ -62,6 +62,11 @@ class Business(commands.Cog):
         if not business:
             return await ctx.reply("You don't have a business!")
 
+        income_per_second = 1
+
+        for rocket in business.rockets:
+            income_per_second += rocket.income_per_second
+
         embed = Embed(
             title="Business Information",
             description="Information about your business.",
@@ -74,7 +79,7 @@ class Business(commands.Cog):
         embed.add_field(name="Name", value=business.name, inline=False)
         embed.add_field(
             name="Income",
-            value=f"{business.income_per_second} per second",
+            value=f"{income_per_second} per second",
             inline=False,
         )
         embed.add_field(
@@ -84,7 +89,7 @@ class Business(commands.Cog):
         )
         embed.add_field(
             name="Money you can claim.",
-            value=f"{business.income_per_second * (int(time.time()) - business.last_claim_time)}",
+            value=f"{income_per_second * (int(time.time()) - business.last_claim_time)}",
         )
 
         value = ""
@@ -213,7 +218,7 @@ class Business(commands.Cog):
                 int(time()) - business.last_claim_time
             )  # CurrentTime - LastClaimTime = Difference
             multiplier = (
-                seconds * rocket.income_per_second
+                seconds * rocket.rate
             )  # Difference * IncomePerSecond
             income += rocket.rate * multiplier  # HowMuchMoneyRocketMakes * Difference
         await self.bot.db.business.add_money(business.owner_id, income)
