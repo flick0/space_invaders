@@ -88,7 +88,7 @@ class Business(commands.Cog):
         )
         embed.add_field(
             name="Money you can claim.",
-            value=f"{income * (int(time.time()) - business.last_claim_time)}",
+            value=f"{income * (int(time()) - business.last_claim_time)}",
         )
 
         value = ""
