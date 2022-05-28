@@ -10,12 +10,8 @@ class CommandErrorHandler(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def sus(self, ctx):
-        await ctx.send("**ඞ**")
-
-    @commands.command()
     async def ping(self, ctx, *, _=None):
-        await self.bot.reply(ctx, round(self.bot.latency * 1000, 2))
+        await ctx.reply(f"Pong! {round(self.bot.latency * 1000, 2)}")
 
     global embed_grey
     embed_grey = discord.Color.light_gray()
