@@ -48,7 +48,7 @@ class RocketMenu(Select):
 
         await interaction.client.db.business.add_money(interaction.user.id,-total)
         await interaction.response.send_message(
-            f"You bought {', '.join([rocket.name for rocket in rockets])[:-1]} for {total}!"
+            f"You bought {', '.join([rocket.name for rocket in rockets])} for {total}!"
         )
 
 class SellRocketMenu(RocketMenu):
