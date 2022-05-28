@@ -20,6 +20,15 @@ class Rocket:
     def to_dict(self):
         return {"name": self.name, "rate": self.rate, "price": self.price}
 
+class Business:
+    def __init__(self, owner_id: int, name: str, rockets: List[Rocket], income_per_second: int, last_claim_time: int):
+        owner_id = owner_id
+        name = name
+        rockets = rockets
+        income_per_second = income_per_second
+        last_claim_time = last_claim_time
+
+
 
 class RocketMenu(Select):
     def __init__(self, rockets: list[Rocket]):
