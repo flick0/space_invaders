@@ -174,6 +174,16 @@ class Business(commands.Cog):
             value="Transfer ownership of your business.",
             inline=False,
         )
+        embed.add_field(
+            name = "information",
+            value = "View information about your business.",
+            inline = False,
+        )
+        embed.add_field(
+            name = "take_off",
+            value = "Take off your business rockets.",
+            inline = False,
+        )
 
         await ctx.reply(embed=embed)
 
