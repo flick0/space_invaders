@@ -8,7 +8,7 @@ from .helpers.components import *
 from discord.ui import View
 
 
-class BusinessCog(commands.Cog):
+class Business(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.rockets: List[Rocket] = [Rocket("Basic", 0.1, 100)]
@@ -57,10 +57,10 @@ class BusinessCog(commands.Cog):
 
     @business.command(name="information", aliases=["i", "info"])
     async def business_information(self, ctx: commands.Context):
-        business_data = await self.bot.db.business.find_one({"owner_id": ctx.author.id})
+        business = await self.bot.db.business.fetch_business(ctx.author.id)
 
-        if not business_data:
-            return await ctx.send("You don't own a business!")
+        if not business:
+            return await ctx.reply("You don't have a business!")
 
         embed = Embed(
             title="Business Information",
@@ -71,20 +71,20 @@ class BusinessCog(commands.Cog):
         embed.set_footer(text=ctx.author.display_name, icon_url=ctx.author.avatar.url)
         embed.set_thumbnail(url=ctx.author.avatar.url)
 
-        embed.add_field(name="Name", value=business_data["name"], inline=False)
+        embed.add_field(name="Name", value=business.name, inline=False)
         embed.add_field(
             name="Income",
-            value=f"{business_data['income_per_second']} per second",
+            value=f"{business.income_per_second} per second",
             inline=False,
         )
         embed.add_field(
             name="Money",
-            value=f"{business_data['money']}",
+            value=f"{business.money}",
             inline=False,
         )
         embed.add_field(
             name="Money you can claim.",
-            value=f"{business_data['income_per_second'] * (time.time() - business_data['last_claim_time'])}",
+            value=f"{business.income_per_second * (time.time() - business.last_claim_time)}",
         )
 
         await ctx.reply(embed=embed)
@@ -332,4 +332,4 @@ class BusinessCog(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(BusinessCog(bot))
+    await bot.add_cog(Business(bot))
