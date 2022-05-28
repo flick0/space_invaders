@@ -215,7 +215,7 @@ class Business(commands.Cog):
 
         await self.bot.db.business.add_money(business.owner_id, income)
         await self.bot.db.business.update_one(
-            business, {"$set": {"last_claim_time": int(time())}}
+            business.to_dict(), {"$set": {"last_claim_time": int(time())}}
         )
         await ctx.reply(f"You earned {income}!")
 
