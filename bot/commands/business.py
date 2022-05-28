@@ -304,7 +304,7 @@ class Business(commands.Cog):
     async def rocket_sell(self, ctx):
         await ctx.reply(
             "Select a rocket to sell from the menu below.",
-            view=View().add_item(SellRocketMenu()),
+            view=View().add_item(SellRocketMenu(self.rockets)),
         )
 
 async def setup(bot):
