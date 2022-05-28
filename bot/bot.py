@@ -62,6 +62,13 @@ class Bot(commands.Bot):
         )
         self.owner_ids = [482139697796349953, 507969622876618754]
 
+    def calculate_income(self, business: Business):
+        """Calculates the income for a business."""
+        base = 1
+        base *= int(time() - business.last_claim_time) 
+        for rocket in business.rockets:
+            base *= rocket.rate
+        return base
     async def on_ready(self):
         """Ran when bot is Ready."""
 
