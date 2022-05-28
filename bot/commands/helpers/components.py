@@ -83,7 +83,7 @@ class RocketMenu(Select):
         await self.response.edit(view=self)
 
     async def callback(self, interaction):
-        business = await interaction.client.db.business.fetch_business(interaction.author.id)
+        business = await interaction.client.db.business.fetch_business(interaction.user.id)
 
         if not business:
             return await interaction.send("You don't own a business!")
@@ -108,7 +108,7 @@ class RocketMenu(Select):
 
 class SellRocketMenu(RocketMenu):
     async def callback(self, interaction):
-        business = await interaction.client.db.business.fetch_business(interaction.author.id)
+        business = await interaction.client.db.business.fetch_business(interaction.user.id)
 
         if not business:
             return await interaction.response.send_message("You don't own a business!")
