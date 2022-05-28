@@ -1,12 +1,13 @@
 from discord import SelectOption
 from discord.ui import Select
 from .objects import *
+from typing import Dict
 
 class RocketMenu(Select):
-    def __init__(self, rockets: list[Rocket]):
+    def __init__(self, rockets: Dict[str, Rocket]):
 
         options = []
-        for rocket in rockets:
+        for rocket in rockets.values():
             options.append(
                 SelectOption(
                     label=rocket.name,
