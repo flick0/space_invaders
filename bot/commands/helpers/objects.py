@@ -21,14 +21,12 @@ class Business:
         owner_id: int,
         name: str,
         rockets: List[Rocket],
-        income_per_second: int,
         last_claim_time: int,
         money: int,
     ):
         self.owner_id = owner_id
         self.name = name
         self.rockets = rockets
-        self.income_per_second = income_per_second
         self.last_claim_time = last_claim_time
         self.money = money
 
@@ -37,7 +35,6 @@ class Business:
             "owner_id": self.owner_id,
             "name": self.name,
             "rockets": [rocket.to_dict() for rocket in self.rockets],
-            "income_per_second": self.income_per_second,
             "last_claim_time": self.last_claim_time,
             "money": self.money,
         }
@@ -48,7 +45,6 @@ class Business:
             data["owner_id"],
             data["name"],
             [Rocket.from_dict(rocket) for rocket in data["rockets"]],
-            data["income_per_second"],
             data["last_claim_time"],
             data["money"],
         )
