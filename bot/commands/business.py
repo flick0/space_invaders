@@ -134,16 +134,7 @@ class Business(commands.Cog):
                 "Cancelled. Come back when you're ready to make a commitment."
             )  # If they cancelled then cancel
 
-        await self.bot.db.business.create_business(
-            {
-                "owner_id": ctx.author.id,
-                "name": message.content,
-                "rockets": [],
-                "income_per_second": 0,
-                "last_claim_time": int(time()),
-                "money": 100,
-            }
-        )
+        await self.bot.db.business.create_business(ctx.author.id, message.content)
 
         await ctx.reply("Business created!")
 
