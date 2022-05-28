@@ -83,11 +83,9 @@ class RocketMenu(Select):
         await self.response.edit(view=self)
 
     async def callback(self, interaction):
-        business_data = await interaction.client.db.business.find_one(
-            {"owner_id": interaction.author.id}
-        )
+        business = await interaction.client.db.business.fetch_business(interaction.author.id)
 
-        if not business_data:
+        if not business:
             return await interaction.send("You don't own a business!")
 
         rockets = []
@@ -100,25 +98,20 @@ class RocketMenu(Select):
             total += rocket.price
             rockets.append(rocket)
 
-        if total > business_data["money"]:
+        if total > business.money:
             return await interaction.send("You don't have enough money!")
 
-        await interaction.client.db.business.update_one(
-            {business_data, {"$inc": {"money": -total}}}
-        )
+        await interaction.client.db.business.add_money(-total)
         await interaction.response.send_message(
-            f"You bought {', '.join([rocket.name for rocket in rockets])} for {total}!"
+            f"You bought {', '.join([rocket.name for rocket in rockets])[:-1]} for {total}!"
         )
-
 
 class SellRocketMenu(RocketMenu):
     async def callback(self, interaction):
-        business_data = await interaction.client.db.business.find_one(
-            {"owner_id": interaction.author.id}
-        )
+        business = await interaction.client.db.business.fetch_business(interaction.author.id)
 
-        if not business_data:
-            return await interaction.send("You don't own a business!")
+        if not business:
+            return await interaction.response.send_message("You don't own a business!")
 
         rockets = []
         total = 0
@@ -132,9 +125,7 @@ class SellRocketMenu(RocketMenu):
 
         total *= 0.75
 
-        await interaction.client.db.business.update_one(
-            {business_data, {"$inc": {"money": total}}}
-        )
+        await interaction.client.db.business.add_money(total)
         await interaction.response.send_message(
-            f"You sold {', '.join([rocket.name for rocket in rockets])} for {total}!"
+            f"You sold {', '.join([rocket.name for rocket in rockets])[:-1]} for {total}!"
         )
