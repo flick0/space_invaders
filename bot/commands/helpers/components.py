@@ -13,7 +13,7 @@ class RocketMenu(Select):
                     label=rocket.name,
                     value=rocket.name,
                     description=f"A rocket which costs {rocket.price} and earns {rocket.rate} per second.",
-                    emoji="\U000025b6",
+                    emoji="\U0001f680:",
                 )
             )
 
