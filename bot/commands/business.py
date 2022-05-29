@@ -78,7 +78,7 @@ class Business(commands.Cog):
         embed.add_field(name="Name", value=business.name, inline=False)
         embed.add_field(
             name="Income",
-            value=f"{income} per second",
+            value=f"{business.income_per} per second",
             inline=False,
         )
         embed.add_field(
@@ -88,7 +88,7 @@ class Business(commands.Cog):
         )
         embed.add_field(
             name="Money you can claim.",
-            value=f"{income * (int(time()) - business.last_claim_time)}",
+            value=f"{income}",
         )
 
         value = ""

@@ -67,8 +67,10 @@ class Bot(commands.Bot):
         base = 1
         base *= int(time() - business.last_claim_time) 
         for rocket in business.rockets:
-            base *= rocket.rate
+            multiplier += rocket.rate
+        base *= multiplier
         return base
+
     async def on_ready(self):
         """Ran when bot is Ready."""
 
