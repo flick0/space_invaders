@@ -15,6 +15,7 @@ alien_models = {
     "cod": {
         "launcher": projectile_launchers["cod"],
         "hp": 1,
+        "speed":0.5
     }
 }
 
@@ -27,24 +28,29 @@ class Alien:
         self.pos = (x, y)
         self.model = model
         self.dmg_multi = dmg_multi
+        self.speed = model["speed"]
 
     def update(self):
-        x, y = self.pos
-        print("alien: ", self.pos)
-        if (
-            x == 0
-            and self.pos[1] % 2
-            or x == self.level.x - 1
-            and not self.pos[1] % 2
-        ):
-            self.pos = (self.pos[0], self.pos[1] + 1)
-            print("alien1: ", self.pos)
-        elif self.pos[1] % 2:
-            self.pos = (self.pos[0] - 1, self.pos[1])
-            print("alien2: ", self.pos)
+        if self.speed >= 1:
+            self.speed -= 1
+            x, y = self.pos
+            print("alien: ", self.pos)
+            if (
+                x == 0
+                and self.pos[1] % 2
+                or x == self.level.x - 1
+                and not self.pos[1] % 2
+            ):
+                self.pos = (self.pos[0], self.pos[1] + 1)
+                print("alien1: ", self.pos)
+            elif self.pos[1] % 2:
+                self.pos = (self.pos[0] - 1, self.pos[1])
+                print("alien2: ", self.pos)
+            else:
+                self.pos = (self.pos[0] + 1, self.pos[1])
+                print("alien3: ", self.pos)
         else:
-            self.pos = (self.pos[0] + 1, self.pos[1])
-            print("alien3: ", self.pos)
+            self.speed += self.model["speed"]
 
     def hit(self, dmg):
         self.model["hp"] -= dmg
