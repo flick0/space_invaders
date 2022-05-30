@@ -19,6 +19,12 @@ class Game(commands.Cog):
             await ctx.send(
                 await self.bot.db.launcher.add_stats(ctx.author.id, stat, -amount)
             )
+        elif mode == "set":
+            await ctx.send(
+                await self.bot.db.launcher.set_stats(ctx.author.id,stat,amount)
+            )
+
+            
 
     @commands.command()
     async def play(self, ctx, x=10, y=10, level=5):

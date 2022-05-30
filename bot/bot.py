@@ -32,15 +32,15 @@ class ShipDatabase:
         else:
             return False
     
-    async def dec_stats(self, owner_id: int, stat: str, amount: int):
+    async def set_stats(self, owner_id: int, stat: str, amount: int):
         if stat in ["dmg", "collision_dmg", "firerate", "speed", "pen", "hp"]:
             await self.db.update_one(
-                {"owner_id": owner_id}, {"$inc": {stat: amount}}
+                {"owner_id": owner_id}, {"$set": {stat: amount}}
             )
             return await self.fetch_launcher(owner_id)
         else:
             return False
-
+    
     async def create_launcher(self, owner_id: int):
         await self.db.insert_one(
             {
