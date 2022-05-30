@@ -20,7 +20,7 @@ class ShipDatabase:
         if data:
             return data
         else:
-            self.create_launcher(owner_id)
+            await self.create_launcher(owner_id)
             return await self.db.find_one({"owner_id": owner_id})
 
     async def add_stats(self, owner_id: int, stat: str, amount: int):
