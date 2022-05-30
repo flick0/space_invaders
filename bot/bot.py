@@ -35,6 +35,7 @@ class ShipDatabase:
     async def create_launcher(self, owner_id: int):
         await self.db.insert_one(
             {
+                "owner_id": owner_id,
                 "dmg": 1,
                 "collision_dmg": 5,
                 "firerate": 0.5,
