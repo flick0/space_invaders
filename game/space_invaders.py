@@ -138,7 +138,7 @@ class Level:
             if random.choice([True, False, True, True]):
                 self.spawn_alien()
                 self.waves += 1
-        ###despawning
+        # despawning
         for alien in self.aliens:
             for projectile in self.projectiles:
                 if alien.pos == projectile.pos:
@@ -178,5 +178,5 @@ class Level:
         return self.update()
 
 
-def new(lvl: int, rows: int, cols: int):
-    return Level(lvl, rows, cols)
+def new(launcher: dict, lvl: int, rows: int, cols: int):
+    return Level(launcher, lvl, rows, cols)
