@@ -125,7 +125,7 @@ class Level:
             return {"win": True}
         elif self.hp <= 0:
             return {"lose": True}
-        if self.firerate <= 1:
+        if self.firerate >= 1:
             self.firerate -= 1
             self.spawn_projectile()
         else:
