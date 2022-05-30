@@ -73,12 +73,12 @@ class Projectile:
 
 
 class Level:
-    def __init__(self, lvl: int, x: int = 10, y: int = 5):
+    def __init__(self, launcher: dict, lvl: int, x: int = 10, y: int = 5):
         self.lvl = lvl
         self.aliens = []
         self.projectiles = []
         self.x = x
-        self.launcher = projectile_launchers["gun"]
+        self.launcher = launcher
         self.firerate = self.launcher["firerate"]
         self.waves = 1
         self.hp = 1
