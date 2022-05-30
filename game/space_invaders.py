@@ -162,9 +162,15 @@ class Level:
                 self.hp -= 1
                 self.aliens_to_despawn.append(alien)
         for alien in self.aliens_to_despawn:
-            self.aliens.remove(alien)
+            try:
+                self.aliens.remove(alien)
+            except ValueError:
+                pass
         for projectile in self.projectiles_to_despawn:
-            self.projectiles.remove(projectile)
+            try:
+                self.projectiles.remove(projectile)
+            except ValueError:
+                pass
         self.aliens_to_despawn, self.projectiles_to_despawn = [], []
         return self.get_board()
 

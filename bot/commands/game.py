@@ -1,4 +1,4 @@
-from discord.ext import commands
+from discord.ext import commands,tasks
 
 from game import space_invaders
 
@@ -36,6 +36,14 @@ class Game(commands.Cog):
             embed=await render_board(level.get_board().get("board")),
             view=Control(level),
         )
+        @tasks.loop(seconds=1)
+        async def game_loop():
+            await game.edit(
+                content="",
+                embed=await render_board(level.get_board().get("board")),
+                view=Control(level),
+            )
+        game_loop.start()
 
 
 async def setup(bot):
