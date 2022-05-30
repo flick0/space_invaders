@@ -10,7 +10,7 @@ class Game(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def stats(self, ctx, stat, amount):
+    async def stats(self, ctx, stat, amount:int):
         await ctx.send(
             await self.bot.db.launcher.add_stats(ctx.author.id, stat, amount)
         )
