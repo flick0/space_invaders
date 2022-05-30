@@ -4,16 +4,15 @@ from typing import Dict, Optional
 
 from discord import Embed, Forbidden, Member
 from discord.ext import commands
-from .helpers.components import *
 from discord.ui import View
+
+from .helpers.components import *
 
 
 class Business(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.rockets: Dict[str, Rocket] = {
-            "Basic": Rocket("Basic", 1.1, 100)
-            }
+        self.rockets: Dict[str, Rocket] = {"Basic": Rocket("Basic", 1.1, 100)}
 
     @commands.group(
         invoke_without_command=True,
@@ -29,7 +28,9 @@ class Business(commands.Cog):
             color=ctx.author.color,
         )
 
-        embed.set_footer(text=ctx.author.display_name, icon_url=ctx.author.avatar.url)
+        embed.set_footer(
+            text=ctx.author.display_name, icon_url=ctx.author.avatar.url
+        )
         embed.set_thumbnail(url=ctx.author.avatar.url)
 
         embed.add_field(
@@ -37,8 +38,12 @@ class Business(commands.Cog):
             value="Create a new business if you don't already have one.",
             inline=False,
         )
-        embed.add_field(name="delete", value="Delete your business.", inline=False)
-        embed.add_field(name="edit", value="Edit your business's name.", inline=False)
+        embed.add_field(
+            name="delete", value="Delete your business.", inline=False
+        )
+        embed.add_field(
+            name="edit", value="Edit your business's name.", inline=False
+        )
         embed.add_field(
             name="transfer",
             value="Transfer ownership of your business.",
@@ -72,7 +77,9 @@ class Business(commands.Cog):
             color=ctx.author.color,
         )
 
-        embed.set_footer(text=ctx.author.display_name, icon_url=ctx.author.avatar.url)
+        embed.set_footer(
+            text=ctx.author.display_name, icon_url=ctx.author.avatar.url
+        )
         embed.set_thumbnail(url=ctx.author.avatar.url)
 
         embed.add_field(name="Name", value=business.name, inline=False)
@@ -116,7 +123,9 @@ class Business(commands.Cog):
         if business:
             return await ctx.reply("You already have a business!")
 
-        await ctx.send("What is the name of your business?\nEnter `cancel` to cancel.")
+        await ctx.send(
+            "What is the name of your business?\nEnter `cancel` to cancel."
+        )
 
         # Creation logic
 
@@ -138,7 +147,9 @@ class Business(commands.Cog):
                 "Cancelled. Come back when you're ready to make a commitment."
             )  # If they cancelled then cancel
 
-        await self.bot.db.business.create_business(ctx.author.id, message.content)
+        await self.bot.db.business.create_business(
+            ctx.author.id, message.content
+        )
 
         await ctx.reply("Business created!")
 
@@ -150,12 +161,21 @@ class Business(commands.Cog):
             await ctx.send("Please enter a name. Enter `cancel` to cancel.")
 
             try:
-                message = await self.bot.wait_for("message", check=lambda m: m.author.id == ctx.author.id and m.channel.id == ctx.channel.id, timeout=15)
+                message = await self.bot.wait_for(
+                    "message",
+                    check=lambda m: m.author.id == ctx.author.id
+                    and m.channel.id == ctx.channel.id,
+                    timeout=15,
+                )
             except TimeoutError:
-                return await ctx.reply("Timed out, try again when you're ready to make a commitment.")
+                return await ctx.reply(
+                    "Timed out, try again when you're ready to make a commitment."
+                )
             name = message.content
 
-        business = await self.bot.db.business.fetch_business({"owner_id": ctx.author.id})
+        business = await self.bot.db.business.fetch_business(
+            {"owner_id": ctx.author.id}
+        )
 
         if not business:
             return await ctx.reply("You don't have ownership of a business!")
@@ -170,7 +190,9 @@ class Business(commands.Cog):
         description="Delete your business. This cannot be reversed.",
     )
     async def business_delete(self, ctx):
-        business = await self.bot.db.business.fetch_business({"owner_id": ctx.author.id})
+        business = await self.bot.db.business.fetch_business(
+            {"owner_id": ctx.author.id}
+        )
 
         if not business:
             return await ctx.reply("You don't have ownership of a business!")
@@ -253,8 +275,12 @@ class Business(commands.Cog):
                 "You didn't enter the name of your business correctly, so we won't transfer ownership. Try again."
             )
 
-        await self.bot.db.business.transfer_business_ownership(business.to_dict(), user.id)
-        await ctx.reply(f"Business ownership transferred to **{user.display_name}**.")
+        await self.bot.db.business.transfer_business_ownership(
+            business.to_dict(), user.id
+        )
+        await ctx.reply(
+            f"Business ownership transferred to **{user.display_name}**."
+        )
 
         try:
             await user.send(
@@ -270,7 +296,7 @@ class Business(commands.Cog):
         invoke_without_command=True,
         description="The top level rocket command. Use a subcommand.",
         case_insensitive=True,
-        aliases = ["r", "rockets"]
+        aliases=["r", "rockets"],
     )
     async def rocket(self, ctx):
         embed = Embed(
@@ -286,7 +312,9 @@ class Business(commands.Cog):
 
         embed.add_field(name="buy", value="Buy a rocket.", inline=False)
         embed.add_field(name="sell", value="Sell a rocket.", inline=False)
-        embed.add_field(name="list", value="List all of your rockets.", inline=False)
+        embed.add_field(
+            name="list", value="List all of your rockets.", inline=False
+        )
         embed.add_field(
             name="info", value="Get information about a rocket.", inline=False
         )
@@ -306,6 +334,7 @@ class Business(commands.Cog):
             "Select a rocket to sell from the menu below.",
             view=View().add_item(SellRocketMenu(self.rockets)),
         )
+
 
 async def setup(bot):
     await bot.add_cog(Business(bot))
