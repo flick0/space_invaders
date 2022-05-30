@@ -31,26 +31,22 @@ class Alien:
         self.speed = model["speed"]
 
     def update(self):
-        if self.speed >= 1:
-            self.speed -= 1
-            x, y = self.pos
-            print("alien: ", self.pos)
-            if (
-                x == 0
-                and self.pos[1] % 2
-                or x == self.level.x - 1
-                and not self.pos[1] % 2
-            ):
-                self.pos = (self.pos[0], self.pos[1] + 1)
-                print("alien1: ", self.pos)
-            elif self.pos[1] % 2:
-                self.pos = (self.pos[0] - 1, self.pos[1])
-                print("alien2: ", self.pos)
-            else:
-                self.pos = (self.pos[0] + 1, self.pos[1])
-                print("alien3: ", self.pos)
+        x, y = self.pos
+        print("alien: ", self.pos)
+        if (
+            x == 0
+            and self.pos[1] % 2
+            or x == self.level.x - 1
+            and not self.pos[1] % 2
+        ):
+            self.pos = (self.pos[0], self.pos[1] + 1)
+            print("alien1: ", self.pos)
+        elif self.pos[1] % 2:
+            self.pos = (self.pos[0] - 1, self.pos[1])
+            print("alien2: ", self.pos)
         else:
-            self.speed += self.model["speed"]
+            self.pos = (self.pos[0] + 1, self.pos[1])
+            print("alien3: ", self.pos)
 
     def hit(self, dmg):
         self.model["hp"] -= dmg
@@ -88,6 +84,7 @@ class Level:
         self.firerate = launcher["firerate"]
         self.waves = 1
         self.hp = 1
+        self.alien_speed = 0.5
         self.y = y
         self.ship = (0, 0)
         self.projectiles_to_despawn = []
@@ -138,8 +135,15 @@ class Level:
             self.firerate += self.launcher["firerate"]
         for projectile in self.projectiles:
             projectile.update()
-        for alien in self.aliens:
-            alien.update()
+        if self.alien_speed >= 1:
+            self.alien_speed -= 1
+            for alien in self.aliens:
+                alien.update()
+        else:
+            self.alien_speed += 0.5 
+            #
+            # add a setting for alien speed later
+            #
         if self.waves < self.lvl:
             if random.choice([True, False, True, True]):
                 self.spawn_alien()
