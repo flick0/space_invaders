@@ -79,7 +79,7 @@ class Level:
         self.projectiles = []
         self.x = x
         self.launcher = launcher
-        self.firerate = self.launcher["firerate"]
+        self.firerate = launcher["firerate"]
         self.waves = 1
         self.hp = 1
         self.y = y
@@ -179,4 +179,6 @@ class Level:
 
 
 def new(launcher: dict, lvl: int, rows: int, cols: int):
+    print(launcher)
+    print("===starting level===")
     return Level(launcher, lvl, rows, cols)
