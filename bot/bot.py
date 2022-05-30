@@ -68,6 +68,7 @@ class Bot(commands.Bot):
         base *= int(int(time()) - int(business.last_claim_time)) # How many seconds its been since last claim.
 
         multiplier = [rocket.rate for rocket in business.rockets]
+        multiplier.append(1)
 
         base *= sum(multiplier)
 
