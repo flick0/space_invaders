@@ -135,12 +135,12 @@ class Level:
             self.firerate += self.launcher["firerate"]
         for projectile in self.projectiles:
             projectile.update()
-        if self.alien_speed >= 1:
-            self.alien_speed -= 1
-            for alien in self.aliens:
+        # if self.alien_speed >= 1:
+        #     self.alien_speed -= 1
+        for alien in self.aliens:
                 alien.update()
-        else:
-            self.alien_speed += 0.5 
+        # else:
+        #     self.alien_speed += 0.5 
             #
             # add a setting for alien speed later
             #

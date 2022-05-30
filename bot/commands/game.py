@@ -10,10 +10,15 @@ class Game(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def stats(self, ctx, stat, amount:int):
-        await ctx.send(
-            await self.bot.db.launcher.add_stats(ctx.author.id, stat, amount)
-        )
+    async def stats(self, ctx,mode, stat, amount:int):
+        if mode == "add":
+            await ctx.send(
+                await self.bot.db.launcher.add_stats(ctx.author.id, stat, amount)
+            )
+        elif mode == "remove":
+            await ctx.send(
+                await self.bot.db.launcher.add_stats(ctx.author.id, stat, -amount)
+            )
 
     @commands.command()
     async def play(self, ctx, x=10, y=10, level=5):
