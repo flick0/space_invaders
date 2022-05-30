@@ -31,7 +31,12 @@ class Alien:
     def update(self):
         x, y = self.pos
         print("alien: ", self.pos)
-        if x == 0 and self.pos[1] % 2 or x == self.level.x - 1 and not self.pos[1] % 2:
+        if (
+            x == 0
+            and self.pos[1] % 2
+            or x == self.level.x - 1
+            and not self.pos[1] % 2
+        ):
             self.pos = (self.pos[0], self.pos[1] + 1)
             print("alien1: ", self.pos)
         elif self.pos[1] % 2:
@@ -40,18 +45,11 @@ class Alien:
         else:
             self.pos = (self.pos[0] + 1, self.pos[1])
             print("alien3: ", self.pos)
-        self.contacted_ship()
 
     def hit(self, dmg):
         self.model["hp"] -= dmg
         if self.model["hp"] <= 0:
             return self.level.aliens_to_despawn.append(self)
-
-    def contacted_ship(self):
-        if self.pos == self.level.ship:
-            self.level.hp -= 1
-        elif self.pos == (self.level.x - 1, self.level.ship[1]):
-            self.level.hp -= 1
 
 
 class Projectile:
@@ -70,24 +68,8 @@ class Projectile:
 
     def update(self):
         if self.pos[1] == 0:
-            print("removing proj1")
             return self.level.projectiles_to_despawn.append(self)
-        print("moving proj: ", self.pos)
         self.pos = (self.pos[0], self.pos[1] - self.launcher["speed"])
-        print("projectile:", self.pos)
-        alien = self.contacted()
-        for alien in self.contacted():
-            alien.hit(self.launcher["dmg"] * self.dmg_multi)
-            if self.launcher["pen"] != 0:
-                self.launcher["pen"] -= 1
-            else:
-                print("removing proj2")
-                return self.level.projectiles_to_despawn.append(self)
-
-    def contacted(self):
-        for alien in self.level.aliens:
-            if alien.pos == self.pos:
-                yield alien
 
 
 class Level:
@@ -144,7 +126,6 @@ class Level:
         elif self.hp <= 0:
             return {"lose": True}
         if self.firerate == 1:
-            print("spawning proj")
             self.firerate = self.launcher["firerate"]
             self.spawn_projectile()
         else:
@@ -157,6 +138,19 @@ class Level:
             if random.choice([True, False, True, True]):
                 self.spawn_alien()
                 self.waves += 1
+        ###despawning
+        for alien in self.aliens:
+            for projectile in self.projectiles:
+                if alien.pos == projectile.pos:
+                    self.aliens_to_despawn.append(alien)
+                    if projectile.launcher["pen"] <= 0:
+                        self.projectiles_to_despawn.append(projectile)
+                    else:
+                        projectile.launcher["pen"] -= 1
+                        projectile.launcher["dmg"] -= 1
+            if alien.pos[1] == self.y - 1:
+                self.hp -= 1
+                self.aliens_to_despawn.append(alien)
         for alien in self.aliens_to_despawn:
             self.aliens.remove(alien)
         for projectile in self.projectiles_to_despawn:
