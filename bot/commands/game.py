@@ -17,8 +17,8 @@ class Game(commands.Cog):
 
     @commands.command()
     async def play(self, ctx, x=10, y=5, level=3):
-        launcher = self.bot.db.launcher.fetch_launcher(ctx.author.id)
-        level = space_invaders.new(level, x, y)
+        launcher = await self.bot.db.launcher.fetch_launcher(ctx.author.id)
+        level = space_invaders.new(launcher, level, x, y)
         game = await ctx.send("```starting...```")
         await game.edit(
             content="",
