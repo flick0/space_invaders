@@ -103,7 +103,7 @@ class ShopMenu(Select):
                 SelectOption(
                     label=f"{item.name} +{item.step}",
                     value=item.name,
-                    description=item.price,
+                    description=f"{int(item.price)}",
                     emoji=item.emoji,
                 )
             )
