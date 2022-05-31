@@ -39,13 +39,13 @@ class Alien:
             or x == self.level.x - 1
             and not self.pos[1] % 2
         ):
-            self.pos = (self.pos[0], self.pos[1] + 1)
+            self.pos = (int(self.pos[0]), int(self.pos[1] + 1))
             print("alien1: ", self.pos)
         elif self.pos[1] % 2:
-            self.pos = (self.pos[0] - 1, self.pos[1])
+            self.pos = (int(self.pos[0] - 1), int(self.pos[1]))
             print("alien2: ", self.pos)
         else:
-            self.pos = (self.pos[0] + 1, self.pos[1])
+            self.pos = (int(self.pos[0] + 1), int(self.pos[1]))
             print("alien3: ", self.pos)
 
     def hit(self, dmg):
@@ -71,7 +71,7 @@ class Projectile:
     def update(self):
         if self.pos[1] == 0:
             return self.level.projectiles_to_despawn.append(self)
-        self.pos = (self.pos[0], self.pos[1] - self.launcher["speed"])
+        self.pos = (self.pos[0], int(self.pos[1] - self.launcher["speed"]))
 
 
 class Level:
@@ -182,14 +182,14 @@ class Level:
     def control_ship(self, way: str):
         if way == "left":
             if self.ship[0] == 0:
-                self.ship = (self.x - 1, self.y - 1)
+                self.ship = (int(self.x - 1), int(self.y - 1))
             else:
-                self.ship = (self.ship[0] - 1, self.y - 1)
+                self.ship = (int(self.ship[0] - 1), int(self.y - 1))
         elif way == "right":
             if self.ship[0] == self.x - 1:
                 self.ship = (0, self.y - 1)
             else:
-                self.ship = (self.ship[0] + 1, self.y - 1)
+                self.ship = (int(self.ship[0] + 1), int(self.y - 1))
         print("ship_pos ", self.ship)
         return self.update()
 
