@@ -40,9 +40,18 @@ async def render_board(board):
     return embed
 
 class Control(discord.ui.View):
-    def __init__(self, level):
+    def __init__(self, level,author):
         self.level = level
+        self.author = author
         super().__init__()
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user.id != self.author.id:
+            await interaction.response.send_message("no you cant!",ephemeral=True)
+            return False
+        else:
+            return True
+
 
     @discord.ui.button(label="<", custom_id="prev")
     async def left(self, interaction, button):

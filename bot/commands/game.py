@@ -60,7 +60,7 @@ class Game(commands.Cog):
         await game.edit(
             content="",
             embed=await render_board(level.get_board().get("board")),
-            view=Control(level),
+            view=Control(level,ctx.author),
         )
         @tasks.loop(seconds=3)
         async def game_loop():
@@ -70,7 +70,7 @@ class Game(commands.Cog):
             await game.edit(
                 content="",
                 embed=await render_board(level.update().get("board")),
-                view=Control(level),
+                view=Control(level,ctx.author),
             )
         # game_loop.start()
 
