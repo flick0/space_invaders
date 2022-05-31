@@ -1,10 +1,59 @@
-from time import time
-import motor.motor_asyncio
-from .commands.helpers import Business
 import os
+from time import time
 
 import discord
+import motor.motor_asyncio
 from discord.ext import commands
+
+from .commands.helpers import Business
+
+
+class ShipDatabase:
+    def __init__(self, db):
+        self.db = db
+
+    async def update_one(self, *args, **kwargs):
+        return await self.db.update_one(*args, **kwargs)
+
+    async def fetch_launcher(self, owner_id: int):
+        data = await self.db.find_one({"owner_id": owner_id})
+        if data:
+            return data
+        else:
+            await self.create_launcher(owner_id)
+            return await self.db.find_one({"owner_id": owner_id})
+
+    async def add_stats(self, owner_id: int, stat: str, amount: int):
+        if stat in ["dmg", "collision_dmg", "firerate", "speed", "pen", "hp"]:
+            await self.db.update_one(
+                {"owner_id": owner_id}, {"$inc": {stat: amount}}
+            )
+            return await self.fetch_launcher(owner_id)
+        else:
+            return False
+    
+    async def set_stats(self, owner_id: int, stat: str, amount: int):
+        if stat in ["dmg", "collision_dmg", "firerate", "speed", "pen", "hp"]:
+            await self.db.update_one(
+                {"owner_id": owner_id}, {"$set": {stat: amount}}
+            )
+            return await self.fetch_launcher(owner_id)
+        else:
+            return False
+    
+    async def create_launcher(self, owner_id: int):
+        await self.db.insert_one(
+            {
+                "owner_id": owner_id,
+                "dmg": 1,
+                "collision_dmg": 5,
+                "firerate": 0.5,
+                "speed": 1,
+                "pen": 0,
+                "hp": 1,
+                "pattern": "single",
+            }
+        )
 
 
 class BusinessDatabase:
@@ -22,14 +71,18 @@ class BusinessDatabase:
         data = await self.db.delete_one({"owner_id": owner_id})
         return Business.from_dict(data)
 
-    async def transfer_business_ownership(self, old_owner_id: int, new_owner_id: int):
+    async def transfer_business_ownership(
+        self, old_owner_id: int, new_owner_id: int
+    ):
         await self.db.update_one(
             {"owner_id": old_owner_id}, {"$set": {"owner_id": new_owner_id}}
         )
         return await self.fetch_business(new_owner_id)
 
     async def edit(self, owner_id: int, name: str):
-        await self.db.update_one({"owner_id": owner_id}, {"$set": {"name": name}})
+        await self.db.update_one(
+            {"owner_id": owner_id}, {"$set": {"name": name}}
+        )
         return await self.fetch_business(owner_id)
 
     async def add_money(self, owner_id: int, amount: int):
@@ -65,7 +118,9 @@ class Bot(commands.Bot):
     def calculate_income(self, business: Business):
         """Calculates the income for a business."""
         base = 1
-        base *= int(int(time()) / 60 - int(business.last_claim_time) / 60) # How many minutes its been since last claim.
+        base *= int(
+            int(time()) - int(business.last_claim_time)
+        )  # How many seconds its been since last claim.
 
         multiplier = [rocket.rate for rocket in business.rockets]
         multiplier.append(1)
@@ -86,10 +141,13 @@ class Bot(commands.Bot):
             else:
                 print(f"Loaded {cog[0]}")
 
-        self.db = motor.motor_asyncio.AsyncIOMotorClient(os.environ["MONGO_URI"])
+        self.db = motor.motor_asyncio.AsyncIOMotorClient(
+            os.environ["MONGO_URI"]
+        )
         self.db.business = BusinessDatabase(
             self.db["business"]["businesses"]
         )  # Database -> Collection or other way round I forgot
+        self.db.launcher = ShipDatabase(self.db["business"]["launchers"])
 
     async def load_all(self):
 

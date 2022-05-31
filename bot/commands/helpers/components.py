@@ -48,10 +48,26 @@ class Control(discord.ui.View):
         elif board.get("lose"):
             await lose(interaction.message)
         elif board.get("board"):
-            return await interaction.response.edit_message(
-                embed=await render_board(board["board"]), view=self
-            )
+            # return await interaction.response.edit_message(
+            #     embed=await render_board(board["board"]), view=self
+            # )
+            ...
 
+    @discord.ui.button(
+        label="-", custom_id="stand", style=discord.ButtonStyle.gray
+    )
+    async def stay(self, interaction, button):
+        board = self.level.update()
+        if board.get("win"):
+            await win(interaction.message)
+        elif board.get("lose"):
+            await lose(interaction.message)
+        elif board.get("board"):
+            # return await interaction.response.edit_message(
+            #     embed=await render_board(board["board"]), view=self
+            # )
+            ...
+        
     @discord.ui.button(
         label=">", custom_id="next", style=discord.ButtonStyle.green
     )
@@ -62,9 +78,11 @@ class Control(discord.ui.View):
         elif board.get("lose"):
             await lose(interaction.message)
         elif board.get("board"):
-            return await interaction.response.edit_message(
-                embed=await render_board(board["board"]), view=self
-            )
+            # return await interaction.response.edit_message(
+            #     embed=await render_board(board["board"]), view=self
+            # )
+            ...
+    
 
 
 class RocketMenu(Select):

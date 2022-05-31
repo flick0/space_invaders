@@ -15,6 +15,7 @@ alien_models = {
     "cod": {
         "launcher": projectile_launchers["cod"],
         "hp": 1,
+        "speed":0.5
     }
 }
 
@@ -27,6 +28,7 @@ class Alien:
         self.pos = (x, y)
         self.model = model
         self.dmg_multi = dmg_multi
+        self.speed = model["speed"]
 
     def update(self):
         x, y = self.pos
@@ -73,15 +75,16 @@ class Projectile:
 
 
 class Level:
-    def __init__(self, lvl: int, x: int = 10, y: int = 5):
+    def __init__(self, launcher: dict, lvl: int, x: int = 10, y: int = 5):
         self.lvl = lvl
         self.aliens = []
         self.projectiles = []
         self.x = x
-        self.launcher = projectile_launchers["gun"]
-        self.firerate = self.launcher["firerate"]
+        self.launcher = launcher
+        self.firerate = launcher["firerate"]
         self.waves = 1
         self.hp = 1
+        self.alien_speed = 0.5
         self.y = y
         self.ship = (0, 0)
         self.projectiles_to_despawn = []
@@ -125,20 +128,27 @@ class Level:
             return {"win": True}
         elif self.hp <= 0:
             return {"lose": True}
-        if self.firerate == 1:
-            self.firerate = self.launcher["firerate"]
+        if self.firerate >= 1:
+            self.firerate -= 1
             self.spawn_projectile()
         else:
             self.firerate += self.launcher["firerate"]
         for projectile in self.projectiles:
             projectile.update()
+        # if self.alien_speed >= 1:
+        #     self.alien_speed -= 1
         for alien in self.aliens:
-            alien.update()
+                alien.update()
+        # else:
+        #     self.alien_speed += 0.5 
+            #
+            # add a setting for alien speed later
+            #
         if self.waves < self.lvl:
             if random.choice([True, False, True, True]):
                 self.spawn_alien()
                 self.waves += 1
-        ###despawning
+        # despawning
         for alien in self.aliens:
             for projectile in self.projectiles:
                 if alien.pos == projectile.pos:
@@ -152,9 +162,15 @@ class Level:
                 self.hp -= 1
                 self.aliens_to_despawn.append(alien)
         for alien in self.aliens_to_despawn:
-            self.aliens.remove(alien)
+            try:
+                self.aliens.remove(alien)
+            except ValueError:
+                pass
         for projectile in self.projectiles_to_despawn:
-            self.projectiles.remove(projectile)
+            try:
+                self.projectiles.remove(projectile)
+            except ValueError:
+                pass
         self.aliens_to_despawn, self.projectiles_to_despawn = [], []
         return self.get_board()
 
@@ -178,5 +194,7 @@ class Level:
         return self.update()
 
 
-def new(lvl: int, rows: int, cols: int):
-    return Level(lvl, rows, cols)
+def new(launcher: dict, lvl: int, rows: int, cols: int):
+    print(launcher)
+    print("===starting level===")
+    return Level(launcher, lvl, rows, cols)
