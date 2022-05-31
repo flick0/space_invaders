@@ -30,7 +30,21 @@ class Game(commands.Cog):
     @commands.command()
     async def play(self, ctx, x=10, y=10, level=5):
         launcher = await self.bot.db.launcher.fetch_launcher(ctx.author.id)
-        level = space_invaders.new(launcher, level, x, y)
+
+        def calculate_level(launcher):
+            """calculate level bsaed on stats"""
+            defaults = self.bot.get_cog("Shop").items
+            level = 1
+            for key, value in launcher.items():
+                if value > defaults[key]:
+                    if defaults[key] < 0 and value < 0:
+                        level += value*10 - defaults[key]*10 
+                    elif defaults[key] < 0 and value > 0:
+                        level += value - defaults[key]*10 
+                    level += defaults[key] - value
+            return int(level)
+
+        level = space_invaders.new(launcher, calculate_level(launcher), x, y)
         game = await ctx.send("```starting...```")
         await game.edit(
             content="",
