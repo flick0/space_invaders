@@ -35,12 +35,12 @@ class Shop(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.items = {
-            "dmg":Item("Damage",5_000,"💥",1),
-            "collision_dmg":Item("Collision Damage",10_000,"💥",1),
-            "firerate":Item("Firerate",20_000,"🔥",0.1),
-            "speed":Item("Speed",20_000,"🚀",0.1),
-            "pen":Item("Penetration",70_000,"💣",1),
-            "hp":Item("Health",10_000,"❤️",1)
+            "dmg":Item("dmg",5_000,"💥",1),
+            "collision_dmg":Item("collision_dmg",10_000,"💥",1),
+            "firerate":Item("firerate",20_000,"🔥",0.1),
+            "speed":Item("speed",20_000,"🚀",0.1),
+            "pen":Item("pen",70_000,"💣",1),
+            "hp":Item("hp",10_000,"❤️",1)
         }
 
     @commands.group(
@@ -63,17 +63,19 @@ class Shop(commands.Cog):
         embed.set_thumbnail(url=ctx.author.avatar.url)
 
         embed.add_field(
-            name="delete", value="Delete your business.", inline=False
+            name="buy", value="buy an item from the list", inline=False
         )
         await ctx.reply(embed=embed)
 
 
     @shop.command(name="buy", description="Buy a rocket.", aliases=["b"])
     async def rocket_buy(self, ctx):
-        launcher = self.bot.db.launcher.fetch_launcher(ctx.author.id)
+        launcher = await self.bot.db.launcher.fetch_launcher(ctx.author.id)
         items = self.items.copy()
-        for item in items:
-            if launcher[item.name] != 0:
+        for item in items.values():
+            if launcher[item.name] < 0:
+                item.multiplier(int(launcher[item.name]*10))
+            elif launcher[item.name] != 0:
                 item.multiplier(launcher[item.name])
         await ctx.reply(
             "Select a upgrade to buy from the menu below.",
