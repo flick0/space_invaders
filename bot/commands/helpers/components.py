@@ -114,6 +114,13 @@ class ShopMenu(Select):
             options=options,
         )
 
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user.id != self.author.id:
+            await interaction.response.send_message("no not you!",ephemeral=True)
+            return False
+        else:
+            return True
+
     async def on_timeout(self):
         for child in self.children:
             child.disabled = True
