@@ -5,6 +5,8 @@ from typing import Dict
 import discord
 
 
+
+
 async def win(game):
     embed = discord.Embed(title="You Win")
     await game.edit(embed=embed, view=None)
@@ -34,7 +36,6 @@ async def render_board(board):
     embed = discord.Embed(title=" ", description=desc)
     return embed
 
-
 class Control(discord.ui.View):
     def __init__(self, level):
         self.level = level
@@ -48,10 +49,9 @@ class Control(discord.ui.View):
         elif board.get("lose"):
             await lose(interaction.message)
         elif board.get("board"):
-            # return await interaction.response.edit_message(
-            #     embed=await render_board(board["board"]), view=self
-            # )
-            ...
+            return await interaction.response.edit_message(
+                embed=await render_board(board["board"]), view=self
+            )
 
     @discord.ui.button(
         label="-", custom_id="stand", style=discord.ButtonStyle.gray
@@ -63,10 +63,9 @@ class Control(discord.ui.View):
         elif board.get("lose"):
             await lose(interaction.message)
         elif board.get("board"):
-            # return await interaction.response.edit_message(
-            #     embed=await render_board(board["board"]), view=self
-            # )
-            ...
+            return await interaction.response.edit_message(
+                embed=await render_board(board["board"]), view=self
+            )
         
     @discord.ui.button(
         label=">", custom_id="next", style=discord.ButtonStyle.green
@@ -78,11 +77,71 @@ class Control(discord.ui.View):
         elif board.get("lose"):
             await lose(interaction.message)
         elif board.get("board"):
-            # return await interaction.response.edit_message(
-            #     embed=await render_board(board["board"]), view=self
-            # )
-            ...
+            return await interaction.response.edit_message(
+                embed=await render_board(board["board"]), view=self
+            )
     
+class ShopMenu(Select):
+    def __init__(self, items:dict):
+        self.items = items
+        options = []
+        for item in items.values():
+            options.append(
+                SelectOption(
+                    label=f"{item.name} +{item.step}",
+                    value=item.name,
+                    description=item.price,
+                    emoji=item.emoji,
+                )
+            )
+        super().__init__(
+            placeholder="View available upgrades",
+            min_values=1,
+            max_values=len(items),
+            options=options,
+        )
+
+    async def on_timeout(self):
+        for child in self.children:
+            child.disabled = True
+        await self.response.edit(view=self)
+    
+    async def callback(self, interaction):
+        business = await interaction.client.db.business.fetch_business(
+            interaction.user.id
+        )
+
+        if not business:
+            return await interaction.response.send_message(
+                "You don't own a business!"
+            )
+
+        items = []
+        total = 0
+
+        for value in self.values:
+            upgrade = self.items[value]
+            total += upgrade.price
+            items.append(upgrade)
+
+        if total > business.money:
+            return await interaction.response.send_message(
+                "You don't have enough money!"
+            )
+
+        for item in items:
+            await interaction.client.db.launcher.add_stats(
+                interaction.user.id,
+                item.name,
+                item.step
+                )
+
+        await interaction.client.db.business.add_money(
+            interaction.user.id, -total
+        )
+        await interaction.response.send_message(
+            f"You bought {', '.join([item.name for item in items])} for {total}!"
+        )
 
 
 class RocketMenu(Select):

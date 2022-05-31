@@ -10,6 +10,7 @@ class Game(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    @commands.is_owner()
     async def stats(self, ctx,mode, stat, amount:int):
         if mode == "add":
             await ctx.send(
@@ -38,13 +39,15 @@ class Game(commands.Cog):
         )
         @tasks.loop(seconds=3)
         async def game_loop():
-            
+            """
+            an alternate update method
+            """
             await game.edit(
                 content="",
                 embed=await render_board(level.update().get("board")),
                 view=Control(level),
             )
-        game_loop.start()
+        # game_loop.start()
 
 
 async def setup(bot):
