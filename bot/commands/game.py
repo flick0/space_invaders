@@ -36,12 +36,16 @@ class Game(commands.Cog):
             defaults = self.bot.get_cog("Shop").items
             level = 1
             for key, value in launcher.items():
-                if value > defaults[key]:
-                    if defaults[key] < 0 and value < 0:
-                        level += value*10 - defaults[key]*10 
-                    elif defaults[key] < 0 and value > 0:
-                        level += value - defaults[key]*10 
-                    level += defaults[key] - value
+                if key in ["_id","owner_id"]:
+                    continue
+                elif value > defaults[key]:
+                    if defaults[key] < 0 and value.price < 0:
+                        level += value.price*10 - defaults[key]*10 
+                    elif defaults[key] < 0 and value.price > 0:
+                        level += value.price - defaults[key]*10 
+                    else:
+                        level += value.price - defaults[key]
+            print("level: ",int(level))
             return int(level)
 
         level = space_invaders.new(launcher, calculate_level(launcher), x, y)
