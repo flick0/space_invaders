@@ -7,9 +7,12 @@ import discord
 
 
 
-async def win(game):
-    embed = discord.Embed(title="You Win")
-    await game.edit(embed=embed, view=None)
+async def win(interaction):
+    await interaction.client.db.business.add_money(
+            interaction.user.id, 50_000
+    )
+    embed = discord.Embed(title="You Win 50,000!")
+    await interaction.message.edit(embed=embed, view=None)
 
 
 async def lose(game):
@@ -29,7 +32,7 @@ async def render_board(board):
             elif x[y].get("ship"):
                 desc += "<:sh:979326671285002250>"
             elif x[y].get("bullet"):
-                desc += "<:bu:979326671578603551>"
+                desc += "<:bu:981184041598455858>"
             else:
                 desc += "<:sp:979317788776726558>"
         desc += "\n"
@@ -73,6 +76,7 @@ class Control(discord.ui.View):
     async def right(self, interaction, button):
         board = self.level.control_ship("right")
         if board.get("win"):
+
             await win(interaction.message)
         elif board.get("lose"):
             await lose(interaction.message)

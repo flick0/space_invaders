@@ -33,18 +33,25 @@ class Game(commands.Cog):
 
         def calculate_level(launcher):
             """calculate level bsaed on stats"""
-            defaults = self.bot.get_cog("Shop").items
+            defaults = {
+                "dmg": 1,
+                "collision_dmg": 5,
+                "firerate": 0.5,
+                "speed": 1,
+                "pen": 0,
+                "hp": 1,
+            }
             level = 1
             for key, value in launcher.items():
-                if key in ["_id","owner_id"]:
+                if key in ["_id","owner_id","pattern"]:
                     continue
-                elif value > defaults[key]:
-                    if defaults[key] < 0 and value.price < 0:
-                        level += value.price*10 - defaults[key]*10 
-                    elif defaults[key] < 0 and value.price > 0:
-                        level += value.price - defaults[key]*10 
+                if value > defaults[key]:
+                    if defaults[key] < 0 and value < 0:
+                        level += value*10 - defaults[key]*10 
+                    elif defaults[key] < 0 and value > 0:
+                        level += value - defaults[key]*10 
                     else:
-                        level += value.price - defaults[key]
+                        level += value - defaults[key]
             print("level: ",int(level))
             return int(level)
 
