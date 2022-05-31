@@ -95,8 +95,9 @@ class Control(discord.ui.View):
             )
     
 class ShopMenu(Select):
-    def __init__(self, items:dict):
+    def __init__(self, items:dict,author):
         self.items = items
+        self.author = author
         options = []
         for item in items.values():
             options.append(

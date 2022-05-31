@@ -79,7 +79,7 @@ class Shop(commands.Cog):
                 item.multiplier(launcher[item.name])
         await ctx.reply(
             "Select a upgrade to buy from the menu below.",
-            view=View().add_item(ShopMenu(items)),
+            view=View().add_item(ShopMenu(items,ctx.author)),
         )
 
 
