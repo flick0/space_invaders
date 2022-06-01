@@ -12,7 +12,23 @@ from .helpers import *
 class Business(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.rockets: Dict[str, Rocket] = {"Basic": Rocket("Basic", 1.1, 100)}
+        self.rockets: Dict[str, Rocket] = {
+            "bee": Rocket("bee"                        ,1,            1,"🐝"),
+            "baloon": Rocket("baloon"                  ,5,            100,"🎈"),
+            "helicopter": Rocket("rocket"              ,10,           500,"🚁"),
+            "plane": Rocket("plane"                    ,50,           1000,"🛩️"),
+            "jet": Rocket("jet"                        ,60,           1100,"✈️"),
+            "weather_baloon": Rocket("weather_baloon"  ,70,           1200,"🏐"),
+            "rocket": Rocket("rocket"                  ,100,          2000,"🚀"),
+            "satelite": Rocket("satelite"              ,500,          5000,"🛰️"),
+            "ufo": Rocket("ufo"                        ,1000,         10000,"🛸"),
+            "tokyo_tower": Rocket("tokyo_tower"        ,10000,        100000,"🗼"),
+            "large_fish": Rocket("large_fish"          ,50000,        500000,"🐟"),
+            "nuclear_charged_electric_plug": 
+            Rocket("nuclear_charged_electric_plug"     ,9999999,      9999999,"🔌"),
+            
+
+            }
 
     @commands.group(
         invoke_without_command=True,
@@ -297,10 +313,10 @@ class Business(commands.Cog):
 
         embed.add_field(name="buy", value="Buy a rocket.", inline=False)
         embed.add_field(name="sell", value="Sell a rocket.", inline=False)
-        embed.add_field(name="list", value="List all of your rockets.", inline=False)
-        embed.add_field(
-            name="info", value="Get information about a rocket.", inline=False
-        )
+        # embed.add_field(name="list", value="List all of your rockets.", inline=False)
+        # embed.add_field(
+        #     name="info", value="Get information about a rocket.", inline=False
+        # )
 
         await ctx.reply(embed=embed)
 

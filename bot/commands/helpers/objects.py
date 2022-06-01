@@ -4,17 +4,18 @@ from typing import List
 class Rocket:
     """represents a rocket"""
 
-    def __init__(self, name: str, rate: float, price: float):
+    def __init__(self, name: str, rate: float, price: float,emoji:str):
         self.name = name
         self.rate = rate
         self.price = price
+        self.emoji = emoji
 
     @classmethod
     def from_dict(cls, data: dict):
-        return cls(data["name"], data["rate"], data["price"])
+        return cls(data["name"], data["rate"], data["price"],data["emoji"])
 
     def to_dict(self):
-        return {"name": self.name, "rate": self.rate, "price": self.price}
+        return {"name": self.name, "rate": self.rate, "price": self.price,"emoji":self.emoji}
 
 
 class Business:
