@@ -55,7 +55,7 @@ class Game(commands.Cog):
         game = await ctx.send("```yaml\nstarting...\n```")
         await game.edit(
             content="",
-            embed=await render_board(await level.get_board().get("board")),
+            embed=await render_board((await level.get_board()).get("board")),
             view=Control(level,ctx.author),
         )
         ###################
@@ -66,7 +66,7 @@ class Game(commands.Cog):
             """
             await game.edit(
                 content="",
-                embed=await render_board(await level.update().get("board")),
+                embed=await render_board((await level.update()).get("board")),
                 view=Control(level,ctx.author),
             )
         # game_loop.start()
