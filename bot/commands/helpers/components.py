@@ -158,7 +158,6 @@ class ShopMenu(Select):
             await interaction.client.db.launcher.add_stats(
                 interaction.user.id, item.name, item.step
             )
-
         await interaction.client.db.business.add_money(interaction.user.id, -total)
         await interaction.response.send_message(
             f"You bought {', '.join([item.name for item in items])} for {total}!"
@@ -208,12 +207,12 @@ class RocketMenu(Select):
             rocket = interaction.client.get_cog("Business").rockets[value]
             total += rocket.price
             rockets.append(rocket)
-
         if total > business.money:
             return await interaction.response.send_message(
                 "You don't have enough money!"
             )
-
+        for rocket in rockets:
+            await interaction.client.db.business.add_rocket(interaction.user.id,rocket)
         await interaction.client.db.business.add_money(interaction.user.id, -total)
         await interaction.response.send_message(
             f"You bought {', '.join([rocket.name for rocket in rockets])} for {total}!"
