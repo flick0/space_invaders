@@ -77,7 +77,7 @@ class Business(commands.Cog):
         embed.add_field(name="Name", value=business.name, inline=False)
         embed.add_field(
             name="Income",
-            value=f"{1 * sum([rocket.rate for rocket in business.rockets])} per second",
+            value=f"{1 * sum([rocket.rate for rocket in business.rockets])} per minute",
             inline=False,
         )
         embed.add_field(
