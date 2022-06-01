@@ -87,7 +87,7 @@ class Business(commands.Cog):
         )
         embed.add_field(
             name="Money you can claim.",
-            value=f"{income}",
+            value=income,
         )
 
         value = ""
