@@ -87,7 +87,7 @@ class BusinessDatabase:
         )
         return await self.fetch_business(owner_id)
 
-    async def get_rockets(self, owner_id: int):
+    async def fetch_rockets(self, owner_id: int):
         data = await self.db.find_one({"owner_id": owner_id})
         return [Rocket.from_dict(rocket) for rocket in data["rockets"]]
 
