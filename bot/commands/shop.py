@@ -67,6 +67,8 @@ class Shop(commands.Cog):
             if launcher[item.name] - self.defaults[item.name] > 0:
                 if launcher[item.name] < 1:
                     item.multiplier(int(launcher[item.name]*10))
+                elif  2 > launcher[item.name] > 1:
+                    item.multiplier(int(str(round(launcher[item.name]*10,1))[1]))
                 else:
                     item.multiplier(int(launcher[item.name]))
         hud = "```yaml\n"
