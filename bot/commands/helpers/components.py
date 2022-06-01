@@ -55,7 +55,7 @@ class Control(discord.ui.View):
 
 
     @discord.ui.button(
-        label="<", custom_id="prev", style=discord.ButtonStyle.blurple
+        label="ᐊ", custom_id="prev", style=discord.ButtonStyle.blurple
         )
     async def left(self, interaction, button):
         board = await self.level.control_ship("left")
@@ -69,7 +69,7 @@ class Control(discord.ui.View):
             )
 
     @discord.ui.button(
-        label="-", custom_id="stand", style=discord.ButtonStyle.green
+        label="⚪", custom_id="stand", style=discord.ButtonStyle.green
     )
     async def stay(self, interaction, button):
         board = await self.level.update()
@@ -83,7 +83,7 @@ class Control(discord.ui.View):
             )
         
     @discord.ui.button(
-        label=">", custom_id="next", style=discord.ButtonStyle.blurple
+        label="ᐅ", custom_id="next", style=discord.ButtonStyle.blurple
     )
     async def right(self, interaction, button):
         board = await self.level.control_ship("right")
