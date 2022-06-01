@@ -176,7 +176,7 @@ class RocketMenu(Select):
                 SelectOption(
                     label=rocket.name,
                     value=rocket.name,
-                    description=f"A {rocket.name} which costs {rocket.price} and earns {rocket.rate} per second.",
+                    description=f"price > {rocket.price} income/min > {rocket.rate}",
                     emoji=rocket.emoji,
                 )
             )
