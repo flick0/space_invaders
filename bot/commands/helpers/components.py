@@ -110,7 +110,7 @@ class ShopMenu(Select):
                 SelectOption(
                     label=f"{item.name} +{item.step}",
                     value=item.name,
-                    description=f"{int(item.price)}",
+                    description=f"{int(item.price)}⚡",
                     emoji=item.emoji,
                 )
             )
@@ -151,7 +151,7 @@ class ShopMenu(Select):
 
         if total > business.money:
             return await interaction.response.send_message(
-                "You don't have enough money!"
+                "You don't have enough ⚡!"
             )
 
         for item in items:
@@ -175,7 +175,7 @@ class RocketMenu(Select):
                 SelectOption(
                     label=rocket.name,
                     value=rocket.name,
-                    description=f"price > {rocket.price} income/min > {rocket.rate}",
+                    description=f"{rocket.price}⚡   {rocket.rate}⚡/min",
                     emoji=rocket.emoji,
                 )
             )
@@ -209,13 +209,13 @@ class RocketMenu(Select):
             rockets.append(rocket)
         if total > business.money:
             return await interaction.response.send_message(
-                "You don't have enough money!"
+                "You don't have enough ⚡!"
             )
         for rocket in rockets:
             await interaction.client.db.business.add_rocket(interaction.user.id,rocket)
         await interaction.client.db.business.add_money(interaction.user.id, -total)
         await interaction.response.send_message(
-            f"You bought {', '.join([rocket.name for rocket in rockets])} for {total}!"
+            f"You bought {', '.join([rocket.name for rocket in rockets])} for {total}⚡!"
         )
 
 
@@ -242,5 +242,5 @@ class SellRocketMenu(RocketMenu):
 
         await interaction.client.db.business.add_money(interaction.user.id, total)
         await interaction.response.send_message(
-            f"You sold {', '.join([rocket.name for rocket in rockets])} for {total}!"
+            f"You sold {', '.join([rocket.name for rocket in rockets])} for {total}⚡!"
         )

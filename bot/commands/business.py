@@ -91,24 +91,24 @@ class Business(commands.Cog):
         embed.add_field(name="Name", value=business.name, inline=False)
         embed.add_field(
             name="Income",
-            value=f"{1 * sum([rocket.rate for rocket in business.rockets])} per minute",
+            value=f"{1 * sum([rocket.rate for rocket in business.rockets])}⚡/min",
             inline=False,
         )
         embed.add_field(
-            name="Money",
-            value=f"{business.money}",
+            name="currency",
+            value=f"{business.money}⚡",
             inline=False,
         )
         embed.add_field(
-            name="Money you can claim.",
+            name="⚡ you can claim.",
             value=income,
         )
 
         value = ""
 
         for rocket in await self.bot.db.business.fetch_rockets(ctx.author.id):
-            if len(value) < 1024:
-                value += f"{rocket.emoji}{rocket.name} `x{rocket.amount}`\n"
+            if len(value) < 1000:
+                value += f"{rocket.emoji}{rocket.name} `x{rocket.rate}`\n"
             else:
                 embed.add_field(name="Rockets", value=value, inline=False)
             value = ""
@@ -224,7 +224,7 @@ class Business(commands.Cog):
     @business.command(
         name="take_off",
         aliases=["tf"],
-        description="Take off your rockets, gaining you money.",
+        description="Take off your rockets, gaining you ⚡.",
     )
     async def business_take_off(self, ctx):
         business = await self.bot.db.business.fetch_business(ctx.author.id)
@@ -238,7 +238,7 @@ class Business(commands.Cog):
         await self.bot.db.business.update_one(
             business.to_dict(), {"$set": {"last_claim_time": int(time())}}
         )
-        await ctx.reply(f"You earned {income}!")
+        await ctx.reply(f"You earned {income}⚡!")
 
     @business.command(
         name="transfer",
