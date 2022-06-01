@@ -60,9 +60,9 @@ class Control(discord.ui.View):
     async def left(self, interaction, button):
         board = await self.level.control_ship("left")
         if board.get("win"):
-            await win(interaction.message)
+            await win(interaction)
         elif board.get("lose"):
-            await lose(interaction.message)
+            await lose(interaction)
         elif board.get("board"):
             return await interaction.response.edit_message(
                 embed=await render_board(board["board"]), view=self
@@ -74,9 +74,9 @@ class Control(discord.ui.View):
     async def stay(self, interaction, button):
         board = await self.level.update()
         if board.get("win"):
-            await win(interaction.message)
+            await win(interaction)
         elif board.get("lose"):
-            await lose(interaction.message)
+            await lose(interaction)
         elif board.get("board"):
             return await interaction.response.edit_message(
                 embed=await render_board(board["board"]), view=self
@@ -88,9 +88,9 @@ class Control(discord.ui.View):
     async def right(self, interaction, button):
         board = await self.level.control_ship("right")
         if board.get("win"):
-            await win(interaction.message)
+            await win(interaction)
         elif board.get("lose"):
-            await lose(interaction.message)
+            await lose(interaction)
         elif board.get("board"):
             return await interaction.response.edit_message(
                 embed=await render_board(board["board"]), view=self
