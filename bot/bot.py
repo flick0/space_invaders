@@ -24,16 +24,14 @@ class Bot(commands.Bot):
 
     def calculate_income(self, business: Business) -> float | int:
         """Calculates the income for a business."""
-        base = 1
-        base *= int(
-            int(int(time()) - int(business.last_claim_time) / 60)
-        )  # How many seconds its been since last claim.
-
+        base = 0
+        base += int(
+            int(time() - business.last_claim_time)/60
+        )
+        # How many minutes its been since last claim.
         multiplier = [rocket.rate for rocket in business.rockets]
         multiplier.append(1)
-
         base *= sum(multiplier)
-
         return base
 
     async def on_ready(self):
