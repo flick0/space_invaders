@@ -25,7 +25,7 @@ class Game(commands.Cog):
                 await self.bot.db.launcher.set_stats(ctx.author.id,stat,amount)
             )
 
-    async def calculate_level(launcher)->int:
+    async def calculate_level(self,launcher)->int:
         """calculate level based on stats"""
         defaults = {
             "dmg": 1,
