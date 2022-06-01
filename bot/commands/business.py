@@ -15,7 +15,7 @@ class Business(commands.Cog):
         self.rockets: Dict[str, Rocket] = {
             "bee": Rocket("bee"                        ,1,            1,"🐝"),
             "baloon": Rocket("baloon"                  ,5,            100,"🎈"),
-            "helicopter": Rocket("rocket"              ,10,           500,"🚁"),
+            "helicopter": Rocket("helicopter"          ,10,           500,"🚁"),
             "plane": Rocket("plane"                    ,50,           1000,"🛩️"),
             "jet": Rocket("jet"                        ,60,           1100,"✈️"),
             "weather_baloon": Rocket("weather_baloon"  ,70,           1200,"🏐"),
@@ -26,8 +26,6 @@ class Business(commands.Cog):
             "large_fish": Rocket("large_fish"          ,50000,        500000,"🐟"),
             "nuclear_charged_electric_plug": 
             Rocket("nuclear_charged_electric_plug"     ,9999999,      9999999,"🔌"),
-            
-
             }
 
     @commands.group(
