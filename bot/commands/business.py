@@ -145,6 +145,13 @@ class Business(commands.Cog):
         name="edit", aliases=["e"], description="Edit your business's name."
     )
     async def business_edit(self, ctx, *, name: Optional[str]):
+        business = await self.bot.db.business.fetch_business(
+            {"owner_id": ctx.author.id}
+        )
+
+        if not business:
+            return await ctx.reply("You don't have ownership of a business!")
+
         if not name:
             await ctx.send("Please enter a name. Enter `cancel` to cancel.")
 
@@ -160,13 +167,6 @@ class Business(commands.Cog):
                     "Timed out, try again when you're ready to make a commitment."
                 )
             name = message.content
-
-        business = await self.bot.db.business.fetch_business(
-            {"owner_id": ctx.author.id}
-        )
-
-        if not business:
-            return await ctx.reply("You don't have ownership of a business!")
 
         await self.bot.db.business.edit(business.owner_id, name)
 
