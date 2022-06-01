@@ -178,9 +178,7 @@ class Business(commands.Cog):
         description="Delete your business. This cannot be reversed.",
     )
     async def business_delete(self, ctx):
-        business = await self.bot.db.business.fetch_business(
-            {"owner_id": ctx.author.id}
-        )
+        business = await self.bot.db.business.fetch_business(ctx.author.id)
 
         if not business:
             return await ctx.reply("You don't have ownership of a business!")
@@ -242,6 +240,7 @@ class Business(commands.Cog):
 
         if user.id == ctx.author.id:
             return await ctx.reply("You can't transfer ownership to yourself.")
+
         await ctx.send(
             f"To confirm you want to transfer ownership of your business to **{user.display_name}**, enter your business's name in chat.\nEnter `cancel` to cancel."
         )
@@ -264,7 +263,7 @@ class Business(commands.Cog):
             )
 
         await self.bot.db.business.transfer_business_ownership(
-            business.to_dict(), user.id
+            ctx.author.id, user.id
         )
         await ctx.reply(f"Business ownership transferred to **{user.display_name}**.")
 
