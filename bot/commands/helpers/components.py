@@ -175,7 +175,7 @@ class RocketMenu(Select):
                 SelectOption(
                     label=rocket.name,
                     value=rocket.name,
-                    description=f"{rocket.price}⚡   {rocket.rate}⚡/min",
+                    description=f"{rocket.price}⚡ |||  {rocket.rate}⚡/min",
                     emoji=rocket.emoji,
                 )
             )
@@ -244,3 +244,30 @@ class SellRocketMenu(RocketMenu):
         await interaction.response.send_message(
             f"You sold {', '.join([rocket.name for rocket in rockets])} for {total}⚡!"
         )
+
+class ListRocketMenu(Select):
+    """menu for listing rockets"""
+    def __init__(self, rockets: Dict[str, Rocket]):
+
+        options = []
+        num = 1
+        for rocket in rockets:
+            options.append(
+                SelectOption(
+                    label=f"{num}) {rocket.name}",
+                    value=f"{num}) {rocket.name}",
+                    description=f"{rocket.price}⚡ |||  {rocket.rate}⚡/min",
+                    emoji=rocket.emoji,
+                )
+            )
+            num += 1
+
+        super().__init__(
+            placeholder="View all your rockets!",
+            min_values=1,
+            max_values=len(rockets),
+            options=options,
+        )
+
+    async def callback(self, interaction):
+        return await interaction.response.send_message("hello there",ephemeral=True)

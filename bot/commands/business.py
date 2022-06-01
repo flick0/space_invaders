@@ -67,9 +67,8 @@ class Business(commands.Cog):
             value="Take off your business rockets, claiming money",
             inline=False,
         )
-
         await ctx.reply(embed=embed)
-
+    
     @business.command(name="information", aliases=["i", "info"])
     async def business_information(self, ctx: commands.Context):
         business = await self.bot.db.business.fetch_business(ctx.author.id)
@@ -91,30 +90,21 @@ class Business(commands.Cog):
         embed.add_field(name="Name", value=business.name, inline=False)
         embed.add_field(
             name="Income",
-            value=f"{1 * sum([rocket.rate for rocket in business.rockets])}⚡/min",
+            value=f"{1 * sum([rocket.rate for rocket in business.rockets])}\⚡/min",
             inline=False,
         )
         embed.add_field(
             name="currency",
-            value=f"{business.money}⚡",
+            value=f"{business.money}\⚡",
             inline=False,
         )
         embed.add_field(
-            name="⚡ you can claim.",
-            value=income,
+            name="you can claim.",
+            value=f"{income}\⚡",
         )
-
-        value = ""
-
-        for rocket in await self.bot.db.business.fetch_rockets(ctx.author.id):
-            if len(value) < 1000:
-                value += f"{rocket.emoji}{rocket.name} `x{rocket.rate}`\n"
-            else:
-                embed.add_field(name="Rockets", value=value, inline=False)
-            value = ""
-        if value:
-            embed.add_field(name="Rockets", value=value, inline=False)
-        await ctx.reply(embed=embed)
+        _rockets = await self.bot.db.business.fetch_rockets(ctx.author.id)
+        await ctx.reply(embed=embed,view=View().add_item(ListRocketMenu(_rockets)))
+        
 
     @business.command(
         name="create",
@@ -236,7 +226,7 @@ class Business(commands.Cog):
 
         await self.bot.db.business.add_money(business.owner_id, income)
         await self.bot.db.business.update_one(
-            business.to_dict(), {"$set": {"last_claim_time": int(time())}}
+            {"owner_id":business.owner_id}, {"$set": {"last_claim_time": int(time())}}
         )
         await ctx.reply(f"You earned {income}⚡!")
 
@@ -310,7 +300,7 @@ class Business(commands.Cog):
 
         embed.add_field(name="buy", value="Buy a rocket.", inline=False)
         embed.add_field(name="sell", value="Sell a rocket.", inline=False)
-        # embed.add_field(name="list", value="List all of your rockets.", inline=False)
+        embed.add_field(name="list", value="List all of your rockets.", inline=False)
         # embed.add_field(
         #     name="info", value="Get information about a rocket.", inline=False
         # )
@@ -330,6 +320,27 @@ class Business(commands.Cog):
             "Select a rocket to sell from the menu below. You sell for 3/4 of the price.",
             view=View().add_item(SellRocketMenu(self.rockets)),
         )
+    
+    @rocket.command(name="list",description="List all of your rockets.", aliases=["l"])
+    async def rocket_list(self,ctx):
+        
+        value = ""
+        _rockets = await self.bot.db.business.fetch_rockets(ctx.author.id)
+        print("_rocket: ",_rockets)
+        rockets = {}
+        for rocket in _rockets:
+            if rocket.name in rockets:
+                rockets[rocket.name].append(rocket)
+            else:
+                rockets[rocket.name] = [rocket,]
+        print("rockets: ",rockets)
+        for rocket in rockets:
+                value += f"{rockets[rocket][0].emoji}{rockets[rocket][0].name}"
+                num = len(rockets[rocket])
+                value += f"  `x{num}`\n"
+        print(value)
+        embed = discord.Embed(title="Rocket List",description=value, color=0x00FF00)
+        await ctx.reply(embed=embed)
 
 
 async def setup(bot):
