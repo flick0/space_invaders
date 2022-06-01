@@ -314,7 +314,7 @@ class Business(commands.Cog):
     @rocket.command(name="sell", description="Sell a rocket.", aliases=["s"])
     async def rocket_sell(self, ctx):
         await ctx.reply(
-            "Select a rocket to sell from the menu below.",
+            "Select a rocket to sell from the menu below. You sell for 3/4 of the price.",
             view=View().add_item(SellRocketMenu(self.rockets)),
         )
 
