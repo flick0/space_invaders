@@ -48,8 +48,8 @@ class Shop(commands.Cog):
         await ctx.reply(embed=embed)
 
 
-    @shop.command(name="buy", description="Buy a rocket.", aliases=["b"])
-    async def rocket_buy(self, ctx):
+    @shop.command(name="buy", description="Buy an upgrade.", aliases=["b"])
+    async def buy(self, ctx):
         launcher = await self.bot.db.launcher.fetch_launcher(ctx.author.id)
         items = self.items.copy()
         for item in items.values():
@@ -60,8 +60,9 @@ class Shop(commands.Cog):
                 item.multiplier(int(launcher[item.name]*10))
             elif launcher[item.name] != 0:
                 item.multiplier(launcher[item.name])
+
         await ctx.reply(
-            "Select a upgrade to buy from the menu below.",
+            "```yaml\n".join(["{} > {}  ".format(self.items[key].emoji,launcher[key]) for key,value in launcher.items()])+"```",
             view=View().add_item(ShopMenu(items,ctx.author)),
         )
 
