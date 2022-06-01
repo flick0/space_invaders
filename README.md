@@ -3,14 +3,14 @@
 <div align="center">
 
 ```ocaml
- Space / Invaders / Discord
+ 👾 Space / Invaders / Discord 👾
 ```
 
 </div>
 
 welcome to the git repo of the SpaceInvaders discord bot
 
-## 👾 ‎ <samp>SETUP</samp>
+## 🐟 ‎ <samp>SETUP</samp>
 
 ```yamkl
 to self host the bot
@@ -18,14 +18,14 @@ to self host the bot
 
 ### `Linux`
 
-run the setup.sh script
+run the `start.sh` script
 
 ```bash
-$ chmod +x ./setup.sh
+$ chmod +x ./start.sh
 ```
 
 ```bash
-$ ./setup.sh
+$ ./start.sh
 ```
 
 > you will need docker installed on you computer
