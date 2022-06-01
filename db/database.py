@@ -4,8 +4,8 @@ from bot.commands.helpers import *
 
 
 class ShipDatabase:
-    """database holding all stats of player ships
-    """
+    """database holding all stats of player ships"""
+
     def __init__(self, db):
         self.db = db
 
@@ -22,22 +22,18 @@ class ShipDatabase:
 
     async def add_stats(self, owner_id: int, stat: str, amount: int):
         if stat in ["dmg", "collision_dmg", "firerate", "speed", "pen", "hp"]:
-            await self.db.update_one(
-                {"owner_id": owner_id}, {"$inc": {stat: amount}}
-            )
+            await self.db.update_one({"owner_id": owner_id}, {"$inc": {stat: amount}})
             return await self.fetch_launcher(owner_id)
         else:
             return False
-    
+
     async def set_stats(self, owner_id: int, stat: str, amount: int):
         if stat in ["dmg", "collision_dmg", "firerate", "speed", "pen", "hp"]:
-            await self.db.update_one(
-                {"owner_id": owner_id}, {"$set": {stat: amount}}
-            )
+            await self.db.update_one({"owner_id": owner_id}, {"$set": {stat: amount}})
             return await self.fetch_launcher(owner_id)
         else:
             return False
-    
+
     async def create_launcher(self, owner_id: int):
         await self.db.insert_one(
             {
@@ -54,8 +50,8 @@ class ShipDatabase:
 
 
 class BusinessDatabase:
-    """database holding all businesses of players
-    """
+    """database holding all businesses of players"""
+
     def __init__(self, db):
         self.db = db
 
@@ -70,24 +66,18 @@ class BusinessDatabase:
         data = await self.db.delete_one({"owner_id": owner_id})
         return Business.from_dict(data)
 
-    async def transfer_business_ownership(
-        self, old_owner_id: int, new_owner_id: int
-    ):
+    async def transfer_business_ownership(self, old_owner_id: int, new_owner_id: int):
         await self.db.update_one(
             {"owner_id": old_owner_id}, {"$set": {"owner_id": new_owner_id}}
         )
         return await self.fetch_business(new_owner_id)
 
     async def edit(self, owner_id: int, name: str):
-        await self.db.update_one(
-            {"owner_id": owner_id}, {"$set": {"name": name}}
-        )
+        await self.db.update_one({"owner_id": owner_id}, {"$set": {"name": name}})
         return await self.fetch_business(owner_id)
 
     async def add_money(self, owner_id: int, amount: int):
-        await self.db.update_one(
-            {"owner_id": owner_id}, {"$inc": {"money": amount}}
-        )
+        await self.db.update_one({"owner_id": owner_id}, {"$inc": {"money": amount}})
         return await self.fetch_business(owner_id)
 
     async def create_business(self, owner_id: int, name: str):
@@ -102,4 +92,3 @@ class BusinessDatabase:
                 ),  # The last time they claimed their money
             }
         )
-

@@ -11,17 +11,12 @@ projectile_launchers = {
         "pen": 0,
     },
 }
-alien_models = {
-    "cod": {
-        "launcher": projectile_launchers["cod"],
-        "hp": 1,
-        "speed":0.5
-    }
-}
+alien_models = {"cod": {"launcher": projectile_launchers["cod"], "hp": 1, "speed": 0.5}}
 
 
 class Alien:
     """represents an alien"""
+
     def __init__(
         self, level, x: int, y: int, model=alien_models["cod"], dmg_multi=1
     ) -> None:
@@ -36,12 +31,7 @@ class Alien:
         """
         alien movement
         """
-        if (
-            x == 0
-            and self.pos[1] % 2
-            or x == self.level.x - 1
-            and not self.pos[1] % 2
-        ):
+        if x == 0 and self.pos[1] % 2 or x == self.level.x - 1 and not self.pos[1] % 2:
             self.pos = (int(self.pos[0]), int(self.pos[1] + 1))
         elif self.pos[1] % 2:
             self.pos = (int(self.pos[0] - 1), int(self.pos[1]))
@@ -49,7 +39,7 @@ class Alien:
             self.pos = (int(self.pos[0] + 1), int(self.pos[1]))
 
     async def hit(self, dmg):
-        """ to be run when a projectile and alien are in same tile"""
+        """to be run when a projectile and alien are in same tile"""
         self.model["hp"] -= dmg
         if self.model["hp"] <= 0:
             return self.level.aliens_to_despawn.append(self)
@@ -57,6 +47,7 @@ class Alien:
 
 class Projectile:
     """represents a bullet"""
+
     def __init__(
         self,
         level,
@@ -80,11 +71,12 @@ class Level:
     """
     represents a running game
     """
+
     def __init__(self, launcher: dict, lvl: int, x: int = 10, y: int = 5):
         self.lvl = lvl
         self.aliens = []
         self.projectiles = []
-        self.x,self.y  = x,y
+        self.x, self.y = x, y
         self.launcher = launcher
         self.firerate = launcher["firerate"]
         self.waves = 1
@@ -96,7 +88,7 @@ class Level:
         self.spawn_alien()
         self.spawn_ship()
 
-    async def get_board(self)->dict:
+    async def get_board(self) -> dict:
         """dynamically generate a board with details of the ongoing game
 
         Returns:
@@ -132,7 +124,7 @@ class Level:
             )
         )
 
-    async def update(self)->dict:
+    async def update(self) -> dict:
         """update 1 frame and return the updated board
 
         Returns:
@@ -195,7 +187,7 @@ class Level:
         self.ship = (ship_x, self.y - 1)
         print("ship_pos ", self.ship)
 
-    async def control_ship(self, way: str)->dict:
+    async def control_ship(self, way: str) -> dict:
         """change ship pos, update 1 frame and return the updated board
 
         Args:
@@ -217,7 +209,7 @@ class Level:
         return await self.update()
 
 
-def new(launcher: dict, lvl: int, x: int, y: int)->Level:
+def new(launcher: dict, lvl: int, x: int, y: int) -> Level:
     """start a new game
 
     Args:

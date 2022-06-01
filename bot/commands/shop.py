@@ -9,6 +9,7 @@ class Shop(commands.Cog):
     """
     buy upgrades for your ship in spaceinvaders
     """
+
     def __init__(self, bot):
         self.bot = bot
         self.defaults = {
@@ -20,12 +21,12 @@ class Shop(commands.Cog):
             "hp": 1,
         }
         self.items = {
-            "dmg":Item("dmg",5_000,"💥",1),
-            "collision_dmg":Item("collision_dmg",10_000,"💥",1),
-            "firerate":Item("firerate",20_000,"🔥",0.1),
-            "speed":Item("speed",20_000,"🚀",0.1),
-            "pen":Item("pen",70_000,"💣",1),
-            "hp":Item("hp",10_000,"❤️",1)
+            "dmg": Item("dmg", 5_000, "💥", 1),
+            "collision_dmg": Item("collision_dmg", 10_000, "💥", 1),
+            "firerate": Item("firerate", 20_000, "🔥", 0.1),
+            "speed": Item("speed", 20_000, "🚀", 0.1),
+            "pen": Item("pen", 70_000, "💣", 1),
+            "hp": Item("hp", 10_000, "❤️", 1),
         }
         """
         initializing default prices and steps for each item
@@ -45,16 +46,11 @@ class Shop(commands.Cog):
             color=ctx.author.color,
         )
 
-        embed.set_footer(
-            text=ctx.author.display_name, icon_url=ctx.author.avatar.url
-        )
+        embed.set_footer(text=ctx.author.display_name, icon_url=ctx.author.avatar.url)
         embed.set_thumbnail(url=ctx.author.avatar.url)
 
-        embed.add_field(
-            name="buy", value="buy an item from the list", inline=False
-        )
+        embed.add_field(name="buy", value="buy an item from the list", inline=False)
         await ctx.reply(embed=embed)
-
 
     @shop.command(name="buy", description="Buy an upgrade.", aliases=["b"])
     async def buy(self, ctx):
@@ -66,9 +62,9 @@ class Shop(commands.Cog):
             """
             if launcher[item.name] - self.defaults[item.name] > 0:
                 if launcher[item.name] < 1:
-                    item.multiplier(int(launcher[item.name]*10))
-                elif  2 > launcher[item.name] > 1:
-                    item.multiplier(int(str(round(launcher[item.name]*10,1))[1]))
+                    item.multiplier(int(launcher[item.name] * 10))
+                elif 2 > launcher[item.name] > 1:
+                    item.multiplier(int(str(round(launcher[item.name] * 10, 1))[1]))
                 else:
                     item.multiplier(int(launcher[item.name]))
         hud = "```yaml\n"
@@ -77,7 +73,7 @@ class Shop(commands.Cog):
         hud += "\n```"
         await ctx.reply(
             hud,
-            view=View().add_item(ShopMenu(items,ctx.author)),
+            view=View().add_item(ShopMenu(items, ctx.author)),
         )
 
 

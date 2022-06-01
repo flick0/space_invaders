@@ -28,9 +28,7 @@ class Business(commands.Cog):
             color=ctx.author.color,
         )
 
-        embed.set_footer(
-            text=ctx.author.display_name, icon_url=ctx.author.avatar.url
-        )
+        embed.set_footer(text=ctx.author.display_name, icon_url=ctx.author.avatar.url)
         embed.set_thumbnail(url=ctx.author.avatar.url)
 
         embed.add_field(
@@ -38,12 +36,8 @@ class Business(commands.Cog):
             value="Create a new business if you don't already have one.",
             inline=False,
         )
-        embed.add_field(
-            name="delete", value="Delete your business.", inline=False
-        )
-        embed.add_field(
-            name="edit", value="Edit your business's name.", inline=False
-        )
+        embed.add_field(name="delete", value="Delete your business.", inline=False)
+        embed.add_field(name="edit", value="Edit your business's name.", inline=False)
         embed.add_field(
             name="transfer",
             value="Transfer ownership of your business.",
@@ -77,9 +71,7 @@ class Business(commands.Cog):
             color=ctx.author.color,
         )
 
-        embed.set_footer(
-            text=ctx.author.display_name, icon_url=ctx.author.avatar.url
-        )
+        embed.set_footer(text=ctx.author.display_name, icon_url=ctx.author.avatar.url)
         embed.set_thumbnail(url=ctx.author.avatar.url)
 
         embed.add_field(name="Name", value=business.name, inline=False)
@@ -123,9 +115,7 @@ class Business(commands.Cog):
         if business:
             return await ctx.reply("You already have a business!")
 
-        await ctx.send(
-            "What is the name of your business?\nEnter `cancel` to cancel."
-        )
+        await ctx.send("What is the name of your business?\nEnter `cancel` to cancel.")
 
         # Creation logic
 
@@ -147,9 +137,7 @@ class Business(commands.Cog):
                 "Cancelled. Come back when you're ready to make a commitment."
             )  # If they cancelled then cancel
 
-        await self.bot.db.business.create_business(
-            ctx.author.id, message.content
-        )
+        await self.bot.db.business.create_business(ctx.author.id, message.content)
 
         await ctx.reply("Business created!")
 
@@ -278,9 +266,7 @@ class Business(commands.Cog):
         await self.bot.db.business.transfer_business_ownership(
             business.to_dict(), user.id
         )
-        await ctx.reply(
-            f"Business ownership transferred to **{user.display_name}**."
-        )
+        await ctx.reply(f"Business ownership transferred to **{user.display_name}**.")
 
         try:
             await user.send(
@@ -312,9 +298,7 @@ class Business(commands.Cog):
 
         embed.add_field(name="buy", value="Buy a rocket.", inline=False)
         embed.add_field(name="sell", value="Sell a rocket.", inline=False)
-        embed.add_field(
-            name="list", value="List all of your rockets.", inline=False
-        )
+        embed.add_field(name="list", value="List all of your rockets.", inline=False)
         embed.add_field(
             name="info", value="Get information about a rocket.", inline=False
         )

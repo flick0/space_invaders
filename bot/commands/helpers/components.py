@@ -8,15 +8,21 @@ from .objects import *
 
 
 async def win(interaction):
-    await interaction.client.db.business.add_money(
-            interaction.user.id, 50_000
+    await interaction.client.db.business.add_money(interaction.user.id, 50_000)
+    embed = discord.Embed(
+        title="You Win 50,000!",
+        color=0x2F3136,
+        url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     )
-    embed = discord.Embed(title="You Win 50,000!",color=0x2F3136,url="https://www.youtube.com/watch?v=dQw4w9WgXcQ")
     await interaction.message.edit(embed=embed, view=None)
 
 
 async def lose(game):
-    embed = discord.Embed(title="You Lose :(",color=0x2F3136,url="https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+    embed = discord.Embed(
+        title="You Lose :(",
+        color=0x2F3136,
+        url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    )
     await game.message.edit(embed=embed, view=None)
 
 
@@ -36,27 +42,26 @@ async def render_board(board):
             else:
                 desc += "<:sp:979317788776726558>"
         desc += "\n"
-    embed = discord.Embed(title=" ", description=desc,color=0x2F3136)
+    embed = discord.Embed(title=" ", description=desc, color=0x2F3136)
     return embed
+
 
 class Control(discord.ui.View):
     """buttons for controlling the game"""
-    def __init__(self, level,author):
+
+    def __init__(self, level, author):
         self.level = level
         self.author = author
         super().__init__()
 
     async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user.id != self.author.id:
-            await interaction.response.send_message("no you cant!",ephemeral=True)
+            await interaction.response.send_message("no you cant!", ephemeral=True)
             return False
         else:
             return True
 
-
-    @discord.ui.button(
-        label="ᐊ", custom_id="prev", style=discord.ButtonStyle.blurple
-        )
+    @discord.ui.button(label="ᐊ", custom_id="prev", style=discord.ButtonStyle.blurple)
     async def left(self, interaction, button):
         board = await self.level.control_ship("left")
         if board.get("win"):
@@ -68,9 +73,7 @@ class Control(discord.ui.View):
                 embed=await render_board(board["board"]), view=self
             )
 
-    @discord.ui.button(
-        label="⚪", custom_id="stand", style=discord.ButtonStyle.green
-    )
+    @discord.ui.button(label="⚪", custom_id="stand", style=discord.ButtonStyle.green)
     async def stay(self, interaction, button):
         board = await self.level.update()
         if board.get("win"):
@@ -81,10 +84,8 @@ class Control(discord.ui.View):
             return await interaction.response.edit_message(
                 embed=await render_board(board["board"]), view=self
             )
-        
-    @discord.ui.button(
-        label="ᐅ", custom_id="next", style=discord.ButtonStyle.blurple
-    )
+
+    @discord.ui.button(label="ᐅ", custom_id="next", style=discord.ButtonStyle.blurple)
     async def right(self, interaction, button):
         board = await self.level.control_ship("right")
         if board.get("win"):
@@ -95,10 +96,12 @@ class Control(discord.ui.View):
             return await interaction.response.edit_message(
                 embed=await render_board(board["board"]), view=self
             )
-    
+
+
 class ShopMenu(Select):
     """select menu for shop"""
-    def __init__(self, items:dict,author):
+
+    def __init__(self, items: dict, author):
         self.items = items
         self.author = author
         options = []
@@ -120,7 +123,7 @@ class ShopMenu(Select):
 
     async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user.id != self.author.id:
-            await interaction.response.send_message("no not you!",ephemeral=True)
+            await interaction.response.send_message("no not you!", ephemeral=True)
             return False
         else:
             return True
@@ -129,16 +132,14 @@ class ShopMenu(Select):
         for child in self.children:
             child.disabled = True
         await self.response.edit(view=self)
-    
+
     async def callback(self, interaction):
         business = await interaction.client.db.business.fetch_business(
             interaction.user.id
         )
 
         if not business:
-            return await interaction.response.send_message(
-                "You don't own a business!"
-            )
+            return await interaction.response.send_message("You don't own a business!")
 
         items = []
         total = 0
@@ -155,14 +156,10 @@ class ShopMenu(Select):
 
         for item in items:
             await interaction.client.db.launcher.add_stats(
-                interaction.user.id,
-                item.name,
-                item.step
-                )
+                interaction.user.id, item.name, item.step
+            )
 
-        await interaction.client.db.business.add_money(
-            interaction.user.id, -total
-        )
+        await interaction.client.db.business.add_money(interaction.user.id, -total)
         await interaction.response.send_message(
             f"You bought {', '.join([item.name for item in items])} for {total}!"
         )
@@ -170,6 +167,7 @@ class ShopMenu(Select):
 
 class RocketMenu(Select):
     """select menu for buying rockets"""
+
     def __init__(self, rockets: Dict[str, Rocket]):
 
         options = []
@@ -201,9 +199,7 @@ class RocketMenu(Select):
         )
 
         if not business:
-            return await interaction.response.send_message(
-                "You don't own a business!"
-            )
+            return await interaction.response.send_message("You don't own a business!")
 
         rockets = []
         total = 0
@@ -218,9 +214,7 @@ class RocketMenu(Select):
                 "You don't have enough money!"
             )
 
-        await interaction.client.db.business.add_money(
-            interaction.user.id, -total
-        )
+        await interaction.client.db.business.add_money(interaction.user.id, -total)
         await interaction.response.send_message(
             f"You bought {', '.join([rocket.name for rocket in rockets])} for {total}!"
         )
@@ -228,15 +222,14 @@ class RocketMenu(Select):
 
 class SellRocketMenu(RocketMenu):
     """menu for selling rockets"""
+
     async def callback(self, interaction):
         business = await interaction.client.db.business.fetch_business(
             interaction.user.id
         )
 
         if not business:
-            return await interaction.response.send_message(
-                "You don't own a business!"
-            )
+            return await interaction.response.send_message("You don't own a business!")
 
         rockets = []
         total = 0
@@ -248,9 +241,7 @@ class SellRocketMenu(RocketMenu):
 
         total *= 0.75
 
-        await interaction.client.db.business.add_money(
-            interaction.user.id, total
-        )
+        await interaction.client.db.business.add_money(interaction.user.id, total)
         await interaction.response.send_message(
             f"You sold {', '.join([rocket.name for rocket in rockets])} for {total}!"
         )

@@ -12,6 +12,7 @@ from .commands.helpers import Business
 
 class Bot(commands.Bot):
     """discord"""
+
     def __init__(self):
         self.COGS = []
         super().__init__(
@@ -21,7 +22,7 @@ class Bot(commands.Bot):
         )
         self.owner_ids = [482139697796349953, 507969622876618754]
 
-    def calculate_income(self, business: Business)->float|int:
+    def calculate_income(self, business: Business) -> float | int:
         """Calculates the income for a business."""
         base = 1
         base *= int(
@@ -47,9 +48,7 @@ class Bot(commands.Bot):
         """
         load databases
         """
-        self.db = motor.motor_asyncio.AsyncIOMotorClient(
-            os.environ["MONGO_URI"]
-        )
+        self.db = motor.motor_asyncio.AsyncIOMotorClient(os.environ["MONGO_URI"])
         self.db.business = BusinessDatabase(
             self.db["business"]["businesses"]
         )  # Database -> Collection or other way round I forgot
@@ -62,7 +61,7 @@ class Bot(commands.Bot):
     # Cog controls
     #
 
-    async def load_all(self)-> tuple[str, Exception]:
+    async def load_all(self) -> tuple[str, Exception]:
         await super().load_extension("jishaku")
         for file in os.listdir("./bot/commands"):
             if file.endswith(".py"):
@@ -74,7 +73,7 @@ class Bot(commands.Bot):
                 self.COGS.append(f"bot.commands.{file[:-3]}")
                 yield (f"bot.commands.{file[:-3]}", err)
 
-    async def unload_all(self)-> tuple[str, Exception]:
+    async def unload_all(self) -> tuple[str, Exception]:
         for cog in list(self.COGS):
             err = None
             try:
@@ -84,7 +83,7 @@ class Bot(commands.Bot):
             self.COGS.remove(cog)
             yield (cog, err)
 
-    async def load_cog(self, cog: str, *, package=None)-> tuple[str, Exception]:
+    async def load_cog(self, cog: str, *, package=None) -> tuple[str, Exception]:
         err = None
         try:
             await super().load_extension(cog, package=package)
@@ -93,7 +92,7 @@ class Bot(commands.Bot):
         self.COGS.append(cog)
         return (cog, err)
 
-    async def unload_cog(self, cog: str, *, package=None)-> tuple[str, Exception]:
+    async def unload_cog(self, cog: str, *, package=None) -> tuple[str, Exception]:
         err = None
         try:
             await super().unload_extension(cog, package=package)

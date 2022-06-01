@@ -11,7 +11,7 @@ class Game(commands.Cog):
 
     @commands.command()
     @commands.is_owner()
-    async def stats(self, ctx,mode, stat, amount:int):
+    async def stats(self, ctx, mode, stat, amount: int):
         if mode == "add":
             await ctx.send(
                 await self.bot.db.launcher.add_stats(ctx.author.id, stat, amount)
@@ -22,10 +22,10 @@ class Game(commands.Cog):
             )
         elif mode == "set":
             await ctx.send(
-                await self.bot.db.launcher.set_stats(ctx.author.id,stat,amount)
+                await self.bot.db.launcher.set_stats(ctx.author.id, stat, amount)
             )
 
-    async def calculate_level(self,launcher)->int:
+    async def calculate_level(self, launcher) -> int:
         """calculate level based on stats"""
         defaults = {
             "dmg": 1,
@@ -37,13 +37,13 @@ class Game(commands.Cog):
         }
         level = 1
         for key, value in launcher.items():
-            if key in ["_id","owner_id","pattern"]:
+            if key in ["_id", "owner_id", "pattern"]:
                 continue
             if value > defaults[key]:
                 if defaults[key] < 0 and value < 0:
-                    level += value*10 - defaults[key]*10 
+                    level += value * 10 - defaults[key] * 10
                 elif defaults[key] < 0 and value > 0:
-                    level += value - defaults[key]*10 
+                    level += value - defaults[key] * 10
                 else:
                     level += value - defaults[key]
         return int(level)
@@ -56,7 +56,7 @@ class Game(commands.Cog):
         await game.edit(
             content="",
             embed=await render_board((await level.get_board()).get("board")),
-            view=Control(level,ctx.author),
+            view=Control(level, ctx.author),
         )
         ###################
         @tasks.loop(seconds=3)
@@ -67,8 +67,9 @@ class Game(commands.Cog):
             await game.edit(
                 content="",
                 embed=await render_board((await level.update()).get("board")),
-                view=Control(level,ctx.author),
+                view=Control(level, ctx.author),
             )
+
         # game_loop.start()
 
 
