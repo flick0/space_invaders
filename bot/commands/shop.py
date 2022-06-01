@@ -60,9 +60,12 @@ class Shop(commands.Cog):
                 item.multiplier(int(launcher[item.name]*10))
             elif launcher[item.name] != 0:
                 item.multiplier(launcher[item.name])
-
+        hud = "```yaml\n"
+        for item in self.items:
+            hud += f"{item.emoji}>{launcher[item]}  "
+        hud += "\n```"
         await ctx.reply(
-            "```yaml\n".join(["{} > {}  ".format(self.items[key].emoji,launcher[key]) for key,value in launcher.items()])+"```",
+            hud,
             view=View().add_item(ShopMenu(items,ctx.author)),
         )
 
