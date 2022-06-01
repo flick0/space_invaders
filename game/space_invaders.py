@@ -21,6 +21,7 @@ alien_models = {
 
 
 class Alien:
+    """represents an alien"""
     def __init__(
         self, level, x: int, y: int, model=alien_models["cod"], dmg_multi=1
     ) -> None:
@@ -30,9 +31,11 @@ class Alien:
         self.dmg_multi = dmg_multi
         self.speed = model["speed"]
 
-    def update(self):
+    async def update(self):
         x, y = self.pos
-        print("alien: ", self.pos)
+        """
+        alien movement
+        """
         if (
             x == 0
             and self.pos[1] % 2
@@ -40,21 +43,20 @@ class Alien:
             and not self.pos[1] % 2
         ):
             self.pos = (int(self.pos[0]), int(self.pos[1] + 1))
-            print("alien1: ", self.pos)
         elif self.pos[1] % 2:
             self.pos = (int(self.pos[0] - 1), int(self.pos[1]))
-            print("alien2: ", self.pos)
         else:
             self.pos = (int(self.pos[0] + 1), int(self.pos[1]))
-            print("alien3: ", self.pos)
 
-    def hit(self, dmg):
+    async def hit(self, dmg):
+        """ to be run when a projectile and alien are in same tile"""
         self.model["hp"] -= dmg
         if self.model["hp"] <= 0:
             return self.level.aliens_to_despawn.append(self)
 
 
 class Projectile:
+    """represents a bullet"""
     def __init__(
         self,
         level,
@@ -68,32 +70,38 @@ class Projectile:
         self.launcher = launcher
         self.dmg_multi = dmg_multi
 
-    def update(self):
+    async def update(self):
         if self.pos[1] == 0:
             return self.level.projectiles_to_despawn.append(self)
         self.pos = (self.pos[0], int(self.pos[1] - self.launcher["speed"]))
 
 
 class Level:
+    """
+    represents a running game
+    """
     def __init__(self, launcher: dict, lvl: int, x: int = 10, y: int = 5):
         self.lvl = lvl
         self.aliens = []
         self.projectiles = []
-        self.x = x
+        self.x,self.y  = x,y
         self.launcher = launcher
         self.firerate = launcher["firerate"]
         self.waves = 1
-        self.hp = 1
+        self.hp = launcher["hp"]
         self.alien_speed = 0.5
-        self.y = y
         self.ship = (0, 0)
         self.projectiles_to_despawn = []
         self.aliens_to_despawn = []
-        for _ in range(self.x // 2):
-            self.spawn_alien()
+        self.spawn_alien()
         self.spawn_ship()
 
-    def get_board(self):
+    async def get_board(self)->dict:
+        """dynamically generate a board with details of the ongoing game
+
+        Returns:
+            dict: board
+        """
         board = []
         for x in range(self.x):
             board.append([])
@@ -113,7 +121,8 @@ class Level:
     def spawn_alien(self):
         self.aliens.append(Alien(self, 0, 0))
 
-    def spawn_projectile(self):
+    async def spawn_projectile(self):
+        """spawn a bullet at the position of ship"""
         self.projectiles.append(
             Projectile(
                 self,
@@ -123,32 +132,38 @@ class Level:
             )
         )
 
-    def update(self):
+    async def update(self)->dict:
+        """update 1 frame and return the updated board
+
+        Returns:
+            dict: board
+        """
         if self.waves == self.lvl and self.aliens == []:
             return {"win": True}
         elif self.hp <= 0:
             return {"lose": True}
+        """
+        update/spawn projectiles
+        """
         if self.firerate >= 1:
             self.firerate -= 1
-            self.spawn_projectile()
+            await self.spawn_projectile()
         else:
             self.firerate += self.launcher["firerate"]
         for projectile in self.projectiles:
-            projectile.update()
-        # if self.alien_speed >= 1:
-        #     self.alien_speed -= 1
+            await projectile.update()
+        """
+        update/spawn aliens
+        """
         for alien in self.aliens:
-                alien.update()
-        # else:
-        #     self.alien_speed += 0.5 
-            #
-            # add a setting for alien speed later
-            #
+            await alien.update()
         if self.waves < self.lvl:
             if random.choice([True, False, True, True]):
                 self.spawn_alien()
                 self.waves += 1
-        # despawning
+        """
+        prepare to despawn projectiles and aliens
+        """
         for alien in self.aliens:
             for projectile in self.projectiles:
                 if alien.pos == projectile.pos:
@@ -172,14 +187,23 @@ class Level:
             except ValueError:
                 pass
         self.aliens_to_despawn, self.projectiles_to_despawn = [], []
-        return self.get_board()
+        return await self.get_board()
 
     def spawn_ship(self):
+        """spawn ship at center of x axis and at the last row of board"""
         ship_x = self.x // 2
         self.ship = (ship_x, self.y - 1)
         print("ship_pos ", self.ship)
 
-    def control_ship(self, way: str):
+    async def control_ship(self, way: str)->dict:
+        """change ship pos, update 1 frame and return the updated board
+
+        Args:
+            way (str): "left" | "right"
+
+        Returns:
+            dict: board
+        """
         if way == "left":
             if self.ship[0] == 0:
                 self.ship = (int(self.x - 1), int(self.y - 1))
@@ -190,11 +214,19 @@ class Level:
                 self.ship = (0, self.y - 1)
             else:
                 self.ship = (int(self.ship[0] + 1), int(self.y - 1))
-        print("ship_pos ", self.ship)
-        return self.update()
+        return await self.update()
 
 
-def new(launcher: dict, lvl: int, rows: int, cols: int):
-    print(launcher)
-    print("===starting level===")
-    return Level(launcher, lvl, rows, cols)
+def new(launcher: dict, lvl: int, x: int, y: int)->Level:
+    """start a new game
+
+    Args:
+        launcher (dict): player ship stats
+        lvl (int): level/difficulty of the game
+        x (int): len of x axis
+        y (int): len of y axis
+
+    Returns:
+        Level : game
+    """
+    return Level(launcher, lvl, x, y)

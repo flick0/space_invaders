@@ -6,7 +6,7 @@ from discord import Embed, Forbidden, Member
 from discord.ext import commands
 from discord.ui import View
 
-from .helpers.components import *
+from .helpers import *
 
 
 class Business(commands.Cog):

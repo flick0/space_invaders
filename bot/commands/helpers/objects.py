@@ -2,6 +2,7 @@ from typing import List
 
 
 class Rocket:
+    """represents a rocket"""
     def __init__(self, name: str, rate: float, price: float):
         self.name = name
         self.rate = rate
@@ -16,6 +17,7 @@ class Rocket:
 
 
 class Business:
+    """represents a business"""
     def __init__(
         self,
         owner_id: int,
@@ -48,3 +50,28 @@ class Business:
             data["last_claim_time"],
             data["money"],
         )
+
+class Item:
+    """
+    represents a stat upgrade
+    """
+    def __init__(self,name:str,price:int,emoji:str,step:int):
+        self.name = name
+        self.price = price
+        self.emoji = emoji
+        self.step = step
+    
+    def multiplier(self,multiply:int):
+        self.price *= multiply
+    
+    def from_dict(self,data:dict):
+        self.name = data["name"]
+        self.price = data["price"]
+        self.emoji = data["emoji"]
+    
+    def to_dict(self):
+        return {
+            "name":self.name,
+            "price":self.price,
+            "emoji":self.emoji
+        }

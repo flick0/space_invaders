@@ -1,37 +1,14 @@
-from asyncio import TimeoutError
-from time import time
-from typing import Dict, Optional
-
-from discord import Embed, Forbidden, Member
+from discord import Embed
 from discord.ext import commands
 from discord.ui import View
 
-from .helpers.components import ShopMenu
+from .helpers import Item, ShopMenu
 
-class Item:
-    def __init__(self,name:str,price:int,emoji:str,step:int):
-        self.name = name
-        self.price = price
-        self.emoji = emoji
-        self.step = step
-    
-    def multiplier(self,multiply:int):
-        self.price *= multiply
-    
-    def from_dict(self,data:Dict):
-        self.name = data["name"]
-        self.price = data["price"]
-        self.emoji = data["emoji"]
-    
-    def to_dict(self):
-        return {
-            "name":self.name,
-            "price":self.price,
-            "emoji":self.emoji
-        }
-        
 
 class Shop(commands.Cog):
+    """
+    buy upgrades for your ship in spaceinvaders
+    """
     def __init__(self, bot):
         self.bot = bot
         self.items = {
@@ -42,6 +19,9 @@ class Shop(commands.Cog):
             "pen":Item("pen",70_000,"💣",1),
             "hp":Item("hp",10_000,"❤️",1)
         }
+        """
+        initializing default prices and steps for each item
+        """
 
     @commands.group(
         invoke_without_command=True,
@@ -73,6 +53,9 @@ class Shop(commands.Cog):
         launcher = await self.bot.db.launcher.fetch_launcher(ctx.author.id)
         items = self.items.copy()
         for item in items.values():
+            """
+            generate the prices of items based on previous upgrades
+            """
             if launcher[item.name] < 0:
                 item.multiplier(int(launcher[item.name]*10))
             elif launcher[item.name] != 0:

@@ -1,10 +1,10 @@
+from typing import Dict
+
+import discord
 from discord import SelectOption
 from discord.ui import Select
+
 from .objects import *
-from typing import Dict
-import discord
-
-
 
 
 async def win(interaction):
@@ -40,6 +40,7 @@ async def render_board(board):
     return embed
 
 class Control(discord.ui.View):
+    """buttons for controlling the game"""
     def __init__(self, level,author):
         self.level = level
         self.author = author
@@ -53,9 +54,11 @@ class Control(discord.ui.View):
             return True
 
 
-    @discord.ui.button(label="<", custom_id="prev")
+    @discord.ui.button(
+        label="<", custom_id="prev", style=discord.ButtonStyle.blurple
+        )
     async def left(self, interaction, button):
-        board = self.level.control_ship("left")
+        board = await self.level.control_ship("left")
         if board.get("win"):
             await win(interaction.message)
         elif board.get("lose"):
@@ -66,10 +69,10 @@ class Control(discord.ui.View):
             )
 
     @discord.ui.button(
-        label="-", custom_id="stand", style=discord.ButtonStyle.gray
+        label="-", custom_id="stand", style=discord.ButtonStyle.green
     )
     async def stay(self, interaction, button):
-        board = self.level.update()
+        board = await self.level.update()
         if board.get("win"):
             await win(interaction.message)
         elif board.get("lose"):
@@ -80,12 +83,11 @@ class Control(discord.ui.View):
             )
         
     @discord.ui.button(
-        label=">", custom_id="next", style=discord.ButtonStyle.green
+        label=">", custom_id="next", style=discord.ButtonStyle.blurple
     )
     async def right(self, interaction, button):
-        board = self.level.control_ship("right")
+        board = await self.level.control_ship("right")
         if board.get("win"):
-
             await win(interaction.message)
         elif board.get("lose"):
             await lose(interaction.message)
@@ -95,6 +97,7 @@ class Control(discord.ui.View):
             )
     
 class ShopMenu(Select):
+    """select menu for shop"""
     def __init__(self, items:dict,author):
         self.items = items
         self.author = author
@@ -166,6 +169,7 @@ class ShopMenu(Select):
 
 
 class RocketMenu(Select):
+    """select menu for buying rockets"""
     def __init__(self, rockets: Dict[str, Rocket]):
 
         options = []
@@ -223,6 +227,7 @@ class RocketMenu(Select):
 
 
 class SellRocketMenu(RocketMenu):
+    """menu for selling rockets"""
     async def callback(self, interaction):
         business = await interaction.client.db.business.fetch_business(
             interaction.user.id
