@@ -11,6 +11,14 @@ class Shop(commands.Cog):
     """
     def __init__(self, bot):
         self.bot = bot
+        self.defaults = {
+            "dmg": 1,
+            "collision_dmg": 5,
+            "firerate": 0.5,
+            "speed": 1,
+            "pen": 0,
+            "hp": 1,
+        }
         self.items = {
             "dmg":Item("dmg",5_000,"💥",1),
             "collision_dmg":Item("collision_dmg",10_000,"💥",1),
@@ -56,10 +64,11 @@ class Shop(commands.Cog):
             """
             generate the prices of items based on previous upgrades
             """
-            if launcher[item.name] < 0:
-                item.multiplier(int(launcher[item.name]*10))
-            elif launcher[item.name] != 0:
-                item.multiplier(launcher[item.name])
+            if launcher[item.name] - self.defaults[item.name] > 0:
+                if launcher[item.name] < 0:
+                    item.multiplier(int(launcher[item.name]*10))
+                else:
+                    item.multiplier(int(launcher[item.name]))
         hud = "```yaml\n"
         for item in items.values():
             hud += f"{item.emoji}>{launcher[item.name]}  "
