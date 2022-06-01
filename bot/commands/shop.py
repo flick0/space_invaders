@@ -73,7 +73,7 @@ class Shop(commands.Cog):
                     item.multiplier(int(launcher[item.name]))
         hud = "```yaml\n"
         for item in items.values():
-            hud += f"{item.emoji}>{launcher[item.name]}  "
+            hud += f"{item.emoji}>{round(launcher[item.name],2)}  "
         hud += "\n```"
         await ctx.reply(
             hud,

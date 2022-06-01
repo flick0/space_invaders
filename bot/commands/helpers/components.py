@@ -11,13 +11,13 @@ async def win(interaction):
     await interaction.client.db.business.add_money(
             interaction.user.id, 50_000
     )
-    embed = discord.Embed(title="You Win 50,000!")
+    embed = discord.Embed(title="You Win 50,000!",color=0x2F3136,url="https://www.youtube.com/watch?v=dQw4w9WgXcQ")
     await interaction.message.edit(embed=embed, view=None)
 
 
 async def lose(game):
-    embed = discord.Embed(title="You Lose")
-    await game.edit(embed=embed, view=None)
+    embed = discord.Embed(title="You Lose :(",color=0x2F3136,url="https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+    await game.message.edit(embed=embed, view=None)
 
 
 async def render_board(board):
@@ -36,7 +36,7 @@ async def render_board(board):
             else:
                 desc += "<:sp:979317788776726558>"
         desc += "\n"
-    embed = discord.Embed(title=" ", description=desc)
+    embed = discord.Embed(title=" ", description=desc,color=0x2F3136)
     return embed
 
 class Control(discord.ui.View):
