@@ -242,9 +242,7 @@ class SellRocketMenu(RocketMenu):
         total = 0
 
         for value in self.values:
-            rocket = Rocket.from_dict(
-                interaction.client.get_cog("Business").rockets[value]
-            )
+            rocket = interaction.client.get_cog("Business").rockets[value]
             total += rocket.price
             rockets.append(rocket)
 
