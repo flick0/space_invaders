@@ -43,7 +43,7 @@ _idk figure it out yourself..._
 
 </div>
 
-<p align="center"><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/footers/gray0_ctp_on_line.svg?sanitize=true" /></p>
+<p align="center"><img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/footers/gray0_ctp_on_line.svg?sanitize=true" /><br><p align='center'><img src="https://dcbadge.vercel.app/api/shield/977873959993364500?bot=true" /></p></p>
 <div align='center'>
   made by "flicko#2328" and "The Untraceable#4852"
 </div>
