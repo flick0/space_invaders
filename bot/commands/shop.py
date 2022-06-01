@@ -61,8 +61,8 @@ class Shop(commands.Cog):
             elif launcher[item.name] != 0:
                 item.multiplier(launcher[item.name])
         hud = "```yaml\n"
-        for item in self.items:
-            hud += f"{item.emoji}>{launcher[item]}  "
+        for item in self.items.keys():
+            hud += f"{item.emoji}>{launcher[item.name]}  "
         hud += "\n```"
         await ctx.reply(
             hud,
