@@ -7,10 +7,11 @@ from discord.ui import Select
 from .objects import *
 
 
-async def win(interaction):
-    await interaction.client.db.business.add_money(interaction.user.id, 50_000)
+async def win(interaction, level:int):
+    amount = int(10000*level)
+    await interaction.client.db.business.add_money(interaction.user.id,amount )
     embed = discord.Embed(
-        title="You Win 50,000!",
+        title=f"You Win {amount}⚡",
         color=0x2F3136,
         url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     )
@@ -65,7 +66,7 @@ class Control(discord.ui.View):
     async def left(self, interaction, button):
         board = await self.level.control_ship("left")
         if board.get("win"):
-            await win(interaction)
+            await win(interaction,board.get("level"))
         elif board.get("lose"):
             await lose(interaction)
         elif board.get("board"):
@@ -77,7 +78,7 @@ class Control(discord.ui.View):
     async def stay(self, interaction, button):
         board = await self.level.update()
         if board.get("win"):
-            await win(interaction)
+            await win(interaction,board.get("level"))
         elif board.get("lose"):
             await lose(interaction)
         elif board.get("board"):
@@ -89,7 +90,7 @@ class Control(discord.ui.View):
     async def right(self, interaction, button):
         board = await self.level.control_ship("right")
         if board.get("win"):
-            await win(interaction)
+            await win(interaction,board.get("level"))
         elif board.get("lose"):
             await lose(interaction)
         elif board.get("board"):

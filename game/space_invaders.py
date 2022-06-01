@@ -131,7 +131,7 @@ class Level:
             dict: board
         """
         if self.waves == self.lvl and self.aliens == []:
-            return {"win": True}
+            return {"win": True,"level": self.lvl}
         elif self.hp <= 0:
             return {"lose": True}
         """
