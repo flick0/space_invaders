@@ -25,7 +25,7 @@ class Bot(commands.Bot):
         """Calculates the income for a business."""
         base = 1
         base *= int(
-            int(time()) - int(business.last_claim_time)
+            int(time() / 60) - int(business.last_claim_time / 60)
         )  # How many seconds its been since last claim.
 
         multiplier = [rocket.rate for rocket in business.rockets]
