@@ -77,7 +77,7 @@ class Business(commands.Cog):
         if not business:
             return await ctx.reply("You don't have a business!")
 
-        income = self.bot.calculate_income(business)
+        income = await self.bot.calculate_income(business)
 
         embed = Embed(
             title="Business Information",
@@ -106,7 +106,7 @@ class Business(commands.Cog):
 
         value = ""
 
-        for rocket in self.bot.db.business.fetch_rockets(ctx.author.id):
+        for rocket in await self.bot.db.business.fetch_rockets(ctx.author.id):
             if len(value) < 1024:
                 value += f"{rocket.emoji}{rocket.name} `x{rocket.amount}`\n"
             else:
@@ -232,7 +232,7 @@ class Business(commands.Cog):
         if not business:
             return await ctx.reply("You don't have a business!")
 
-        income = self.bot.calculate_income(business)
+        income = await self.bot.calculate_income(business)
 
         await self.bot.db.business.add_money(business.owner_id, income)
         await self.bot.db.business.update_one(

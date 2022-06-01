@@ -22,14 +22,14 @@ class Bot(commands.Bot):
         )
         self.owner_ids = [482139697796349953, 507969622876618754]
 
-    def calculate_income(self, business: Business) -> float | int:
+    async def calculate_income(self, business: Business) -> float | int:
         """Calculates the income for a business."""
         base = 0
         base += int(
             int(time() - business.last_claim_time)/60
         )
         # How many minutes its been since last claim.
-        multiplier = [rocket.rate for rocket in business.rockets]
+        multiplier = [rocket.rate for rocket in await self.db.business.fetch_rockets(business.owner_id)]
         multiplier.append(1)
         base *= sum(multiplier)
         return base
