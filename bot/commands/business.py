@@ -106,10 +106,9 @@ class Business(commands.Cog):
 
         value = ""
 
-        for rocket in business.rockets:
-
-            if len(value > 1024):
-                value += f"{rocket['name']} - {rocket['amount']}\n"
+        for rocket in self.bot.db.business.fetch_rockets(ctx.author.id):
+            if len(value) < 1024:
+                value += f"{rocket.emoji}{rocket.name} `x{rocket.amount}`\n"
             else:
                 embed.add_field(name="Rockets", value=value, inline=False)
             value = ""

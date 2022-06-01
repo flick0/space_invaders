@@ -79,6 +79,17 @@ class BusinessDatabase:
     async def add_money(self, owner_id: int, amount: int):
         await self.db.update_one({"owner_id": owner_id}, {"$inc": {"money": amount}})
         return await self.fetch_business(owner_id)
+    
+    async def add_rocket(self,owner_id: int, rocket:Rocket):
+        await self.db.update_one(
+            {"owner_id": owner_id},
+            {"$push": {"rockets": rocket.to_dict()}},
+        )
+        return await self.fetch_business(owner_id)
+
+    async def get_rockets(self, owner_id: int):
+        data = await self.db.find_one({"owner_id": owner_id})
+        return [Rocket.from_dict(rocket) for rocket in data["rockets"]]
 
     async def create_business(self, owner_id: int, name: str):
         await self.db.insert_one(
