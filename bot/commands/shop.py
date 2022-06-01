@@ -65,7 +65,7 @@ class Shop(commands.Cog):
             generate the prices of items based on previous upgrades
             """
             if launcher[item.name] - self.defaults[item.name] > 0:
-                if launcher[item.name] < 0:
+                if launcher[item.name] < 1:
                     item.multiplier(int(launcher[item.name]*10))
                 else:
                     item.multiplier(int(launcher[item.name]))
