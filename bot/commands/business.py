@@ -92,7 +92,7 @@ class Business(commands.Cog):
 
         value = ""
 
-        for rocket in business.to_dict()["rockets"]:
+        for rocket in business.rockets:
 
             if len(value > 1024):
                 value += f"{rocket['name']} - {rocket['amount']}\n"
