@@ -50,7 +50,7 @@ class Business(commands.Cog):
         )
         embed.add_field(
             name="take_off",
-            value="Take off your business rockets.",
+            value="Take off your business rockets, claiming money",
             inline=False,
         )
 
