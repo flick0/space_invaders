@@ -10,6 +10,26 @@
 
 welcome to the git repo of the SpaceInvaders discord bot
 
+## 🔌 ‎ <samp>LORE</samp>
+
+> somewhere in the future
+>
+> scientists have made a huge breakthrough in power generation,
+> from the recent discovery of quantum particles which can be linked to any other particle in the universe no matter how far, scientists have found a way to farm power from it
+>
+> they have observerd that the more farther 2 linked particles are the more it heats up, > and thus giving off power⚡
+>
+> now u come into business
+> its your job to send these particles zoooooming out far from the generator at earth where their particle pairs are caged
+>
+> the more farther u go, the more power you make
+>
+> _after some years_
+>
+> your business is very succesful but on your journeys far into space, some of your rockets have responded SOS alarms, looks like we arent alone in the galaxy afterall, the rockets have found aliens! but they seem hostile
+>
+> your business now creats motherships with heavy weapons to fight those alines blocking your way to infinite power
+
 ## 🐟 ‎ <samp>SETUP</samp>
 
 ```yamkl

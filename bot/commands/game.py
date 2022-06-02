@@ -50,6 +50,11 @@ class Game(commands.Cog):
 
     @commands.command()
     async def play(self, ctx, x=10, y=10, level=5):
+        if not await self.bot.db.business.fetch_business(
+            ctx.author.id
+        ):
+            return await ctx.reply("You don't own a business!")
+            
         launcher = await self.bot.db.launcher.fetch_launcher(ctx.author.id)
         level = space_invaders.new(launcher, await self.calculate_level(launcher), x, y)
         game = await ctx.send("```yaml\nstarting...\n```")
